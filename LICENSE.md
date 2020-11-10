@@ -2,7 +2,7 @@
 
 Contributor: Manuel Grundner
 
-Source Code: https://github.com/xenial-io/Xenial.Framework
+Source Code: https://github.com/xenial-io/Xenial.Licensing
 
 ## Purpose
 

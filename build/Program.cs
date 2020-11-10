@@ -4,10 +4,10 @@ using static SimpleExec.Command;
 using static Bullseye.Targets;
 using System.IO;
 
-var sln = "Xenial.Identity.sln";
-var projectName = "Xenial.Identity";
-var web = $"src/{projectName}/{projectName}.csproj";
-var iisPackageName = "identity.xenial.io";
+var projectName = "Xenial.Licensing";
+var sln = $"{projectName}.sln";
+var web = $"src/{projectName}.Api/{projectName}.Api.csproj";
+var iisPackageName = "licensing.xenial.io";
 var artifactsLocation = Path.GetFullPath($"./artifacts");
 var artifact = Path.GetFullPath($"{artifactsLocation}/{projectName}.zip");
 var configuration = "Release";
