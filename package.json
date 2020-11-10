@@ -1,5 +1,5 @@
 {
-  "name": "Xenial.Identity",
+  "name": "Xenial.Licensing",
   "version": "1.0.0",
   "description": "",
   "main": "commitlint.config.js",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xenial-io/Xenial.Identity.git"
+    "url": "git+https://github.com/xenial-io/Xenial.Licensing.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/xenial-io/Xenial.Identity/issues"
+    "url": "https://github.com/xenial-io/Xenial.Licensing/issues"
   },
-  "homepage": "https://github.com/xenial-io/Xenial.Identity#readme",
+  "homepage": "https://github.com/xenial-io/Xenial.Licensing#readme",
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/plugin-transform-typescript": "^7.11.0",
