@@ -1,0 +1,40 @@
+﻿<Project>
+  
+  <PropertyGroup>
+    <Product>Xenial.Framework</Product>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <LangVersion>preview</LangVersion>
+    <Copyright>Copyright © Xenial, Manuel Grundner $([System.DateTime]::Today.ToString('yyyy'))</Copyright>
+    <Authors>Xenial, Manuel Grundner</Authors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts\nuget</PackageOutputPath>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageProjectUrl>https://www.xenial.io</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/xenial-io/Xenial.Identity</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIcon>icon-64x64.png</PackageIcon>
+    <PackageIconUrl>https://blog.xenial.io/img/favicon.ico</PackageIconUrl>
+    <Publish>false</Publish>
+    <IsPackTarget>false</IsPackTarget>
+    <NoWarn>$(NoWarn);NU5105</NoWarn>
+    <Nullable>disable</Nullable>
+    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)img\icon-64x64.png" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)\LICENSE.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectCapability Include="DynamicDependentFile" />
+    <ProjectCapability Include="DynamicFileNesting" />
+  </ItemGroup>
+
+</Project>
