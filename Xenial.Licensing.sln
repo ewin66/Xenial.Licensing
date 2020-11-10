@@ -1,15 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30626.31
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5F789C09-1544-4C78-A4A1-CF897D4B593B}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenial.Licensing.Api", "src\Xenial.Licensing.Api\Xenial.Licensing.Api.csproj", "{7974C8E6-2E2E-4527-B526-69263B2BD264}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenial.Licensing.Api", "src\Xenial.Licensing.Api\Xenial.Licensing.Api.csproj", "{7974C8E6-2E2E-4527-B526-69263B2BD264}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenial.Licensing.Cli", "src\Xenial.Licensing.Cli\Xenial.Licensing.Cli.csproj", "{69C1415C-AE78-4952-BFAE-8FB2E1DF0569}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenial.Licensing.Cli", "src\Xenial.Licensing.Cli\Xenial.Licensing.Cli.csproj", "{69C1415C-AE78-4952-BFAE-8FB2E1DF0569}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenial.Licensing.Model", "src\Xenial.Licensing.Model\Xenial.Licensing.Model.csproj", "{9E50F767-A428-4022-B40B-3C8039F01DDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenial.Licensing.Model", "src\Xenial.Licensing.Model\Xenial.Licensing.Model.csproj", "{9E50F767-A428-4022-B40B-3C8039F01DDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,9 +22,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7974C8E6-2E2E-4527-B526-69263B2BD264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -61,9 +61,15 @@ Global
 		{9E50F767-A428-4022-B40B-3C8039F01DDF}.Release|x86.ActiveCfg = Release|Any CPU
 		{9E50F767-A428-4022-B40B-3C8039F01DDF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7974C8E6-2E2E-4527-B526-69263B2BD264} = {5F789C09-1544-4C78-A4A1-CF897D4B593B}
 		{69C1415C-AE78-4952-BFAE-8FB2E1DF0569} = {5F789C09-1544-4C78-A4A1-CF897D4B593B}
 		{9E50F767-A428-4022-B40B-3C8039F01DDF} = {5F789C09-1544-4C78-A4A1-CF897D4B593B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F832FFA-94E9-4654-BE14-FBE321E32E8D}
 	EndGlobalSection
 EndGlobal
