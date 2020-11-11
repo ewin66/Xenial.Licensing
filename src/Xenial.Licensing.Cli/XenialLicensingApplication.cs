@@ -38,10 +38,13 @@ namespace Xenial.Licensing.Cli
             var authority = configuration.GetSection("Authentication:Xenial").GetValue<string>("Authority");
             var disco = await httpClient.GetDiscoveryDocumentAsync(authority);
 
+            var clientId = "Xenial.Licensing.Cli";
+            var scope = "openid profile xenial role offline_access";
             var result = await httpClient.RequestDeviceAuthorizationAsync(new DeviceAuthorizationRequest
             {
                 Address = disco.DeviceAuthorizationEndpoint,
-                ClientId = "Xenial.Licensing.Cli",
+                ClientId = clientId,
+                Scope = scope
             });
 
             WriteLine();
@@ -55,6 +58,57 @@ namespace Xenial.Licensing.Cli
             WriteLine("-------------------");
             WriteLine($"-    {result.UserCode}    -");
             WriteLine("-------------------");
+
+            var fetchToken = true;
+            var accessToken = string.Empty;
+            var identityToken = string.Empty;
+            var refreshToken = string.Empty;
+            var interval = (result.Interval == 0 ? 5 : result.Interval) * 1000;
+
+            while (fetchToken)
+            {
+                WriteLine("Fetching token....");
+                var tokenResponse = await httpClient.RequestDeviceTokenAsync(new DeviceTokenRequest
+                {
+                    Address = disco.TokenEndpoint,
+                    ClientId = clientId,
+                    DeviceCode = result.DeviceCode,
+                });
+                if (tokenResponse.IsError)
+                {
+                    if (tokenResponse.Error == "authorization_pending" || tokenResponse.Error == "slow_down")
+                    {
+                        WriteLine($"{tokenResponse.Error}...waiting.");
+                        await Task.Delay(interval);
+                    }
+                    else
+                    {
+                        throw new Exception(tokenResponse.Error);
+                    }
+                }
+                else
+                {
+                    accessToken = tokenResponse.AccessToken;
+                    identityToken = tokenResponse.IdentityToken;
+                    refreshToken = tokenResponse.RefreshToken;
+                    fetchToken = false;
+                }
+            }
+
+            WriteLine($"Fetched accessToken: {accessToken}");
+            WriteLine();
+            WriteLine($"Fetched identityToken: {identityToken}");
+            WriteLine();
+            WriteLine($"Fetched refreshToken: {refreshToken}");
+
+            var userInfo = await httpClient.GetUserInfoAsync(new UserInfoRequest
+            {
+                Address = disco.UserInfoEndpoint,
+                Token = accessToken
+            });
+
+            WriteLine();
+            WriteLine(userInfo.Raw);
 
             ReadLine();
 
