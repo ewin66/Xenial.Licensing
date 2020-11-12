@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 using Xenial.Licensing.Api.Infrastructure;
@@ -53,8 +54,7 @@ namespace Xenial.Licensing.Api
                 c.OperationFilter<AuthorizeCheckOperationFilter>(Configuration);
             });
             services.AddAuthentication("Bearer")
-                // JWT tokens
-                .AddIdentityServerAuthentication("Bearer", options =>
+                .AddIdentityServerAuthentication("Bearer", (options) =>
                 {
                     Configuration.Bind("Authentication:Xenial", options);
                 });
@@ -73,7 +73,7 @@ namespace Xenial.Licensing.Api
 
                     c.OAuthClientId($"{Configuration.GetSection("Authentication:Xenial").GetValue<string>("ClientId")}.Swagger");
                     c.OAuthAppName($"{Configuration.GetSection("Authentication:Xenial").GetValue<string>("ClientId")}.Swagger");
-                    c.OAuthClientSecret("u5RT0T6GpuK0m1tC0p5joNf5MzU--RM4yaPNGDbDZzM");
+                    c.OAuthClientSecret(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientSecret"));
                     c.OAuthUsePkce();
                 });
             }
