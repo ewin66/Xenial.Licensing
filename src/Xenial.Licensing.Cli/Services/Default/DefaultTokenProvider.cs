@@ -81,8 +81,13 @@ namespace Xenial.Licensing.Cli.Services.Default
             {
                 Address = disco.DeviceAuthorizationEndpoint,
                 ClientId = clientId,
-                Scope = string.Join(" ", scopes),
+                Scope = string.Join(" ", scopes)
             });
+
+            if (result.IsError)
+            {
+                throw new Exception(result.Error);
+            }
 
             WriteLine();
             WriteLine();

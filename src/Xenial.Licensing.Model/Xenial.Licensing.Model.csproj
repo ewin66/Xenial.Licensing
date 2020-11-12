@@ -6,4 +6,8 @@
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="DevExpress.Xpo" Version="20.2.3" />
+  </ItemGroup>
+
 </Project>
