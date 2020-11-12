@@ -5,6 +5,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Xenial.Licensing.Cli;
+using Xenial.Licensing.Cli.Services;
+using Xenial.Licensing.Cli.Services.Default;
 
 var host = CreateHostBuilder(args).Build();
 
@@ -29,6 +31,11 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
     Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
         {
+            services.AddTransient<IUserProfileProvider, DefaultUserProfileProvider>();
+            services.AddTransient<IDeviceIdProvider, DefaultDeviceIdProvider>();
+
+            services.AddHttpClient<DefaultTokenProvider>();
+            services.AddTransient<ITokenProvider, DefaultTokenProvider>();
+
             services.AddSingleton<XenialLicensingApplication>();
-            services.AddHttpClient<XenialLicensingApplication>();
         });
