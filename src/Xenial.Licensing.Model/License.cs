@@ -1,5 +1,6 @@
 ﻿using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
+using DevExpress.Xpo.Metadata;
 
 using System;
 
@@ -43,6 +44,7 @@ namespace Xenial.Licensing.Model
         public LicenseType Type { get => type; set => SetPropertyValue(ref type, value); }
 
         [Persistent("ExpiresAt")]
+        [ValueConverter(typeof(UtcDateTimeConverter))]
         public DateTime ExpiresAt { get => expiresAt; set => SetPropertyValue(ref expiresAt, value); }
 
         [Persistent("ExpiresNever")]
