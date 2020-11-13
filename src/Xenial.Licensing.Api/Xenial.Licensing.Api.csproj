@@ -5,6 +5,7 @@
     <IsPackable>False</IsPackable>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <WarnOnPackingNonPackableProject>False</WarnOnPackingNonPackableProject>
+    <DefaultConnectionString>PLEASE SET BEFORE USE</DefaultConnectionString>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
     <PackageReference Include="IdentityModel.AspNetCore.AccessTokenValidation" Version="1.0.0-preview.3" />
     <PackageReference Include="IdentityModel.AspNetCore.OAuth2Introspection" Version="4.0.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
+    <PackageReference Include="MySql.Data" Version="8.0.22" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="NewFolder\" />
+    <DestinationConnectionStrings Include="DefaultConnection">
+      <Value>$(DefaultConnectionString)</Value>
+    </DestinationConnectionStrings>
   </ItemGroup>
 
 </Project>

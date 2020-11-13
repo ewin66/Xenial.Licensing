@@ -2,16 +2,14 @@
 using System;
 using System.Collections.Generic;
 
-using IdentityModel.AspNetCore.AccessTokenValidation;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
+using Xenial.Licensing.Api.Controllers;
 using Xenial.Licensing.Api.Infrastructure;
 
 namespace Xenial.Licensing.Api
@@ -25,6 +23,8 @@ namespace Xenial.Licensing.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddXpo(Configuration);
+            services.AddXpoDefaultUnitOfWork();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
