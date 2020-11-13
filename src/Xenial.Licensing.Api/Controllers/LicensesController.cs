@@ -13,6 +13,7 @@ using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -36,19 +37,18 @@ namespace Xenial.Licensing.Api.Controllers
         /// </summary>
         /// <returns>OutLicenseModel</returns>
         [HttpGet]
-        //[ProducesResponseType(typeof(string), 400)]
-        //[ProducesResponseType(400)]
-        //[ProducesResponseType(typeof(OutLicenseModel[]), 200)]
-        [ProducesResponseType(typeof(OutLicenseModel), 200)]
+        [ProducesResponseType(typeof(SerializableError), 400)]
+        [ProducesResponseType(typeof(OutLicenseModel[]), 200)]
         [Route("active")]
-        public async Task<IActionResult> GetActive()
+        public async Task<IActionResult> ListActive()
         {
             if (User.Identity is System.Security.Claims.ClaimsIdentity claimIdentity)
             {
                 var idClaim = claimIdentity.FindFirst("sub");
                 if (idClaim == null)
                 {
-                    return BadRequest("no sub claim");
+                    ModelState.AddModelError("sub", "no sub claim");
+                    return BadRequest(ModelState);
                 }
                 var id = idClaim.Value;
                 var licenses = await unitOfWork
