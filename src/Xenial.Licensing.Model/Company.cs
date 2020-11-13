@@ -38,7 +38,7 @@ namespace Xenial.Licensing.Model
     }
 
     [Persistent("CompanyUser")]
-    public class CompanyUser : XenialLicenseBaseObjectId
+    public class CompanyUser : XenialLicenseBaseObject
     {
         private string name;
         private string email;
@@ -49,6 +49,15 @@ namespace Xenial.Licensing.Model
         /// </summary>
         /// <param name="session">The session.</param>
         public CompanyUser(Session session) : base(session) { }
+
+        [Key]
+        [Persistent("Id")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "Needed by XPO")]
+#pragma warning disable CS0649 //Needed by XPO
+        private string id = string.Empty;
+#pragma warning restore CS0649 
+        [PersistentAlias(nameof(id))]
+        public string Id => id;
 
         [Persistent("Name")]
         public string Name { get => name; set => SetPropertyValue(ref name, value); }

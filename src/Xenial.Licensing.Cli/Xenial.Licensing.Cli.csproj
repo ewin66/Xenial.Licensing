@@ -36,4 +36,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Commands\" />
+  </ItemGroup>
+
 </Project>

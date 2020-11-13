@@ -45,9 +45,9 @@ namespace Xenial.Licensing.Api
                             TokenUrl = new Uri($"{Configuration.GetSection("Authentication:Xenial").GetValue<string>("Authority")}/connect/token"),
                             Scopes = new Dictionary<string, string>
                             {
-                                [Configuration.GetSection("Authentication:Xenial").GetValue<string>("Audience")] = Configuration.GetSection("Authentication:Xenial").GetValue<string>("Audience")
+                                [Configuration.GetSection("Authentication:Xenial").GetValue<string>("Audience")] = Configuration.GetSection("Authentication:Xenial").GetValue<string>("Audience"),
                             }
-                        }
+                        },
                     }
                 });
 

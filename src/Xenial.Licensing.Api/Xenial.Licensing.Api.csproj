@@ -10,22 +10,16 @@
 
   <ItemGroup>
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
     <PackageReference Include="IdentityModel.AspNetCore.AccessTokenValidation" Version="1.0.0-preview.3" />
     <PackageReference Include="IdentityModel.AspNetCore.OAuth2Introspection" Version="4.0.1" />
+    <PackageReference Include="IdentityModel" Version="4.4.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="MySql.Data" Version="8.0.22" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="5.0.0" />
-    <PackageReference Include="DevExpress.ExpressApp" Version="20.2.3" />
-    <PackageReference Include="DevExpress.ExpressApp.Blazor" Version="20.2.3" />
-    <PackageReference Include="DevExpress.ExpressApp.ReportsV2.Blazor" Version="20.2.3" />
-    <PackageReference Include="DevExpress.ExpressApp.Security.Xpo" Version="20.2.3" />
-    <PackageReference Include="DevExpress.ExpressApp.Validation.Blazor" Version="20.2.3" />
-    <PackageReference Include="DevExpress.ExpressApp.Xpo" Version="20.2.3" />
-    <PackageReference Include="DevExpress.Persistent.Base" Version="20.2.3" />
-    <PackageReference Include="DevExpress.Persistent.BaseImpl" Version="20.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.0" />
+    <PackageReference Include="AutoMapper" Version="[10.1.1,11.0)" />
   </ItemGroup>
 
   <ItemGroup>
