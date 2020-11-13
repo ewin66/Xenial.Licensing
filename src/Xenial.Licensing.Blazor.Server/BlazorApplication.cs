@@ -21,28 +21,20 @@ namespace Xenial.Licensing.Blazor.Server
         {
             base.OnSetupStarted();
             var configuration = ServiceProvider.GetRequiredService<IConfiguration>();
-            if (configuration.GetConnectionString("ConnectionString") != null)
+            if (configuration.GetConnectionString("DefaultConnection") != null)
             {
-                ConnectionString = configuration.GetConnectionString("ConnectionString");
+                ConnectionString = configuration.GetConnectionString("DefaultConnection");
             }
-#if EASYTEST
-            if(configuration.GetConnectionString("EasyTestConnectionString") != null) {
-                ConnectionString = configuration.GetConnectionString("EasyTestConnectionString");
-            }
-#endif
-#if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached && CheckCompatibilityType == CheckCompatibilityType.DatabaseSchema)
-            {
-                DatabaseUpdateMode = DatabaseUpdateMode.UpdateDatabaseAlways;
-            }
-#endif
+            DatabaseUpdateMode = DatabaseUpdateMode.UpdateDatabaseAlways;
         }
+
         protected override void CreateDefaultObjectSpaceProvider(CreateCustomObjectSpaceProviderEventArgs args)
         {
             var dataStoreProvider = GetDataStoreProvider(args.ConnectionString, args.Connection);
             args.ObjectSpaceProviders.Add(new SecuredObjectSpaceProvider((ISelectDataSecurityProvider)Security, dataStoreProvider, true));
             args.ObjectSpaceProviders.Add(new NonPersistentObjectSpaceProvider(TypesInfo, null));
         }
+
         private IXpoDataStoreProvider GetDataStoreProvider(string connectionString, System.Data.IDbConnection connection)
         {
             var accessor = ServiceProvider.GetRequiredService<XpoDataStoreProviderAccessor>();
@@ -55,6 +47,7 @@ namespace Xenial.Licensing.Blazor.Server
             }
             return accessor.DataStoreProvider;
         }
+
         private void LicensingBlazorApplication_DatabaseVersionMismatch(object sender, DatabaseVersionMismatchEventArgs e)
         {
             e.Updater.Update();

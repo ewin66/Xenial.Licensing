@@ -10,6 +10,11 @@ namespace Xenial.Licensing.Api.Mappers
     {
         public LicenseMapperProfile()
             => CreateMap<License, OutLicenseModel>()
+                .ForMember(m => m.License, o =>
+                {
+                    o.Condition(i => i.GeneratedLicense != null);
+                    o.MapFrom(i => i.GeneratedLicense);
+                })
                 .ReverseMap()
                 .ConstructUsingServiceLocator();
     }

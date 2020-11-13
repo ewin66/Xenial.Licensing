@@ -10,6 +10,7 @@
     <PackageReference Include="DevExpress.Xpo" Version="20.2.3" />
     <PackageReference Include="DevExpress.ExpressApp" Version="20.2.3" />
     <PackageReference Include="DevExpress.Persistent.BaseImpl" Version="20.2.3" />
+    <PackageReference Include="Standard.Licensing" Version="1.1.5" />
   </ItemGroup>
 
 </Project>

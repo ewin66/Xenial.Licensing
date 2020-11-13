@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 using AutoMapper.QueryableExtensions;
 
 using DevExpress.Xpo;
 
-using IdentityModel.Client;
-
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 using Xenial.Licensing.Api.Mappers;
 using Xenial.Licensing.Model;
@@ -64,12 +56,46 @@ namespace Xenial.Licensing.Api.Controllers
 
         [HttpPost]
         [Route("new/trial")]
-        public async Task<IActionResult> RequestTrial()
-            => await Task.FromResult(Ok());
+        [ProducesResponseType(typeof(SerializableError), 400)]
+        [ProducesResponseType(typeof(OutLicenseModel), 200)]
+        public async Task<IActionResult> RequestTrial(InRequestTrialModel model)
+        {
+            if (User.Identity is System.Security.Claims.ClaimsIdentity claimIdentity)
+            {
+                var idClaim = claimIdentity.FindFirst("sub");
+                if (idClaim == null)
+                {
+                    ModelState.AddModelError("sub", "no sub claim");
+                    return BadRequest(ModelState);
+                }
+                var userId = idClaim.Value;
+                var trialRequest = new TrialRequest(unitOfWork)
+                {
+                    MachineKey = model.MachineKey,
+                    UserId = userId
+                };
+
+                await unitOfWork.SaveAsync(trialRequest);
+                await unitOfWork.CommitChangesAsync();
+
+                return Ok(new OutLicenseModel
+                {
+
+                });
+            }
+            return BadRequest();
+        }
     }
 
     public class OutLicenseModel
     {
         public string Id { get; set; }
+        public string License { get; set; }
+    }
+
+    public class InRequestTrialModel
+    {
+        [Required]
+        public string MachineKey { get; set; }
     }
 }

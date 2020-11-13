@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Net.Http;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.Logging;
 
 using Xenial.Licensing.Cli;
 using Xenial.Licensing.Cli.Services;

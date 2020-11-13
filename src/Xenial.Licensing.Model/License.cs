@@ -4,6 +4,10 @@ using DevExpress.Xpo.Metadata;
 
 using System;
 
+using Xenial.Licensing.Model.Infrastructure;
+
+#nullable enable
+
 namespace Xenial.Licensing.Model
 {
 
@@ -15,10 +19,10 @@ namespace Xenial.Licensing.Model
         private DateTime? expiresAt;
         private bool expiresNever;
         private int? maximumUtilization;
-        private string generatedLicense;
-        private LicensingKey key;
-        private CompanyUser user;
-        private ProductBundle productBundle;
+        private Standard.Licensing.License? generatedLicense;
+        private LicensingKey? key;
+        private CompanyUser? user;
+        private ProductBundle? productBundle;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="License"/> class.
@@ -54,16 +58,17 @@ namespace Xenial.Licensing.Model
 
         [Persistent("GeneratedLicense")]
         [Size(SizeAttribute.Unlimited)]
-        public string GeneratedLicense { get => generatedLicense; set => SetPropertyValue(ref generatedLicense, value); }
+        [ValueConverter(typeof(LicenseValueConverter))]
+        public Standard.Licensing.License? GeneratedLicense { get => generatedLicense; set => SetPropertyValue(ref generatedLicense, value); }
 
         [Persistent("LicensingKeyId")]
-        public LicensingKey Key { get => key; set => SetPropertyValue(ref key, value); }
+        public LicensingKey? Key { get => key; set => SetPropertyValue(ref key, value); }
 
         [Persistent("CompanyUserId")]
-        public CompanyUser User { get => user; set => SetPropertyValue(ref user, value); }
+        public CompanyUser? User { get => user; set => SetPropertyValue(ref user, value); }
 
         [Persistent("ProductBundleId")]
-        public ProductBundle ProductBundle { get => productBundle; set => SetPropertyValue(ref productBundle, value); }
+        public ProductBundle? ProductBundle { get => productBundle; set => SetPropertyValue(ref productBundle, value); }
     }
 
     [Persistent("LicenseProduct")]

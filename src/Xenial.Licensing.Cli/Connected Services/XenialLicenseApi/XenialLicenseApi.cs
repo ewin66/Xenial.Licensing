@@ -29,12 +29,12 @@ namespace Xenial.Licensing.Cli.XenialLicenseApi
     
         /// <returns>Success</returns>
         /// <exception cref="LicenseApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LicensesNewTrialAsync();
+        System.Threading.Tasks.Task<OutLicenseModel> LicensesNewTrialAsync(InRequestTrialModel body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="LicenseApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LicensesNewTrialAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<OutLicenseModel> LicensesNewTrialAsync(InRequestTrialModel body, System.Threading.CancellationToken cancellationToken);
     
     }
     
@@ -160,15 +160,15 @@ namespace Xenial.Licensing.Cli.XenialLicenseApi
     
         /// <returns>Success</returns>
         /// <exception cref="LicenseApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task LicensesNewTrialAsync()
+        public System.Threading.Tasks.Task<OutLicenseModel> LicensesNewTrialAsync(InRequestTrialModel body)
         {
-            return LicensesNewTrialAsync(System.Threading.CancellationToken.None);
+            return LicensesNewTrialAsync(body, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="LicenseApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task LicensesNewTrialAsync(System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<OutLicenseModel> LicensesNewTrialAsync(InRequestTrialModel body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Licenses/new/trial");
@@ -179,8 +179,11 @@ namespace Xenial.Licensing.Cli.XenialLicenseApi
             {
                 using (var request_ = await CreateHttpRequestMessageAsync(cancellationToken).ConfigureAwait(false))
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -201,9 +204,24 @@ namespace Xenial.Licensing.Cli.XenialLicenseApi
                         ProcessResponse(client_, response_);
     
                         var status_ = (int)response_.StatusCode;
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IDictionary<string, object>>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new LicenseApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new LicenseApiException<System.Collections.Generic.IDictionary<string, object>>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<OutLicenseModel>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new LicenseApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         if (status_ == 401)
@@ -344,13 +362,33 @@ namespace Xenial.Licensing.Cli.XenialLicenseApi
     public partial class OutLicenseModel 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public OutLicenseModel(string @id)
+        public OutLicenseModel(string @id, string @license)
         {
             this.Id = @id;
+            this.License = @license;
         }
     
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Id { get; }
+    
+        [Newtonsoft.Json.JsonProperty("license", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string License { get; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v12.0.0.2)")]
+    public partial class InRequestTrialModel 
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public InRequestTrialModel(string @machineKey)
+        {
+            this.MachineKey = @machineKey;
+        }
+    
+        [Newtonsoft.Json.JsonProperty("machineKey", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string MachineKey { get; }
     
     
     }

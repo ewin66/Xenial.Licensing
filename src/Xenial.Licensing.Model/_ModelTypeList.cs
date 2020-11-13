@@ -24,6 +24,8 @@ namespace Xenial.Licensing.Model
                 typeof(ProductVersion),
                 typeof(ProductBundle),
                 typeof(ProductBundleItem),
+
+                typeof(TrialRequest),
             };
         }
 
