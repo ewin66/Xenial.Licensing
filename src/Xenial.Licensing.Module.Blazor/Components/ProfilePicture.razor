@@ -1,0 +1,17 @@
+﻿@inherits ProfilePictureComponentBase
+
+<div class="profile-card__image" style="@(Size > 0 ? $"--profile-card-height: {Size + (Large ? 25 : 0)}px;" : string.Empty) @Styles">
+    @if (string.IsNullOrEmpty(ImageUri) && string.IsNullOrEmpty(Inititals))
+    {
+        <XafImage ImageName="Security_UserLogo" Size="Size" Styles="Styles" />
+    }
+    else if (!string.IsNullOrEmpty(ImageUri))
+    {
+        <img src="@ImageUri" class="profile-card__image-item" />
+    }
+    else
+    {
+        <span class="profile-card__image-initials profile-card__image-item"
+              style="--data-forecolor: @ForeColor; --data-backcolor: @BackColor; @(Size > 0 ? $"--profile-card-height: {Size + (Large ? 30 : 6)}px;" : string.Empty)">@Inititals</span>
+        }
+</div>

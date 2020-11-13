@@ -1,12 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 
+using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 
 namespace Xenial.Licensing.Model
 {
     [Persistent("ProductVersion")]
     [DefaultProperty(nameof(Version))]
+    [DefaultClassOptions]
     public class ProductVersion : XenialLicenseBaseObjectId
     {
         private string version;

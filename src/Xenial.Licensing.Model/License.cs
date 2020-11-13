@@ -1,10 +1,13 @@
-﻿using DevExpress.Xpo;
+﻿using DevExpress.Persistent.Base;
+using DevExpress.Xpo;
 
 using System;
 
 namespace Xenial.Licensing.Model
 {
+
     [Persistent("License")]
+    [DefaultClassOptions]
     public class License : XenialLicenseBaseObjectId
     {
         private LicenseType type;

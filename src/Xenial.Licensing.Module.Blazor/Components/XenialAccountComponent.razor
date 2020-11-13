@@ -1,0 +1,33 @@
+﻿@using DevExpress.ExpressApp.Blazor.Components
+
+@inherits AccountComponentBase
+
+<div id=@MainElementId class="account-container d-flex align-items-center pr-2">
+    <button data-action-name="Account" class="account-button p-0 btn btn-secondary btn-header" onclick="xaf.closeOutsideClickController.toggle('@MainElementId', '.account-modal-backdrop')" href="javascript:;">
+        @*<XafImage ImageName="Security_Header" Size="24" Styles="margin: auto;" />*@
+        <ProfilePicture Size="24" Styles="margin: auto; display: flex;" />
+    </button>
+    <div class="account-main dropdown-menu p-0 border-0">
+        <div class="d-flex flex-column align-items-center justify-content-center w-100">
+            <div class="logo-container d-flex align-items-center justify-content-center rounded-circle text-white">
+                <ProfilePicture Size="40" Large="true" />
+            </div>
+            <div class="user-name-container mb-3">
+                <div class="user-name-title text-muted text-center">User Name</div>
+                <div class="user-name text-center">@GetUserName()</div>
+            </div>
+            @if (MyDetailsActionControl.Visible)
+            {
+                <div data-action-name="@MyDetailsActionControl.Caption" class="xaf-btn my-details btn btn-secondary d-flex align-items-center align-content-center mb-3 @(MyDetailsActionControl.Enabled ? "xaf-action cursor-pointer" : "disabled")" @onclick="@(() => OnClick(MyDetailsActionControl))">
+                    <XafImage ImageName="Action_Edit" Size="16" CssClass="mr-2" />
+                    @MyDetailsActionControl.Caption
+                </div>
+            }
+            @if (LogOffActionControl.Visible)
+            {
+                <div data-action-name="@LogOffActionControl.Caption" class="xaf-btn log-off w-100 text-center border-top @(LogOffActionControl.Enabled ? "xaf-action cursor-pointer" : "disabled")" @onclick="@(() => OnClick(LogOffActionControl))">@LogOffActionControl.Caption</div>
+            }
+        </div>
+    </div>
+</div>
+<div class="account-modal-backdrop modal-backdrop" onclick="xaf.closeOutsideClickController.hide('@MainElementId', '.account-modal-backdrop')"></div>

@@ -1,10 +1,12 @@
 ﻿using System;
 
+using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 
 namespace Xenial.Licensing.Model
 {
     [Persistent("Company")]
+    [DefaultClassOptions]
     public class Company : XenialLicenseBaseObjectId
     {
         private string name;

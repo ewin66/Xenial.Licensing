@@ -1,8 +1,10 @@
-﻿using DevExpress.Xpo;
+﻿using DevExpress.Persistent.Base;
+using DevExpress.Xpo;
 
 namespace Xenial.Licensing.Model
 {
     [Persistent("Product")]
+    [DefaultClassOptions]
     public class Product : XenialLicenseBaseObjectId
     {
         private string name;

@@ -13,6 +13,8 @@ namespace Xenial.Licensing.Model
                 typeof(XenialLicenseBaseObject),
                 typeof(XenialLicenseBaseObjectId),
 
+                typeof(UserLoginInfo),
+
                 typeof(Company),
                 typeof(CompanyUser),
                 typeof(License),

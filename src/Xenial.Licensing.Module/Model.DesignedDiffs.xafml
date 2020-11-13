@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" ?>
+<Application Title="Xenial.Licensing">
+  <Options>
+    <LayoutManagerOptions RequiredFieldMark="*" />
+  </Options>
+  <Views>
+  </Views>
+</Application>
