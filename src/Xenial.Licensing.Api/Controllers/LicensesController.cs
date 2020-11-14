@@ -79,6 +79,27 @@ namespace Xenial.Licensing.Api.Controllers
                 await unitOfWork.SaveAsync(trialRequest);
                 await unitOfWork.CommitChangesAsync();
 
+                var settings = await unitOfWork.GetSingletonAsync<LicenseSettings>();
+                if (settings == null)
+                {
+                    ModelState.AddModelError(nameof(LicenseSettings), $"{nameof(LicenseSettings)} not found");
+                }
+                else
+                {
+                    if (settings.DefaultLicensingKey == null)
+                    {
+                        ModelState.AddModelError(nameof(LicenseSettings), $"{nameof(LicenseSettings)}.{nameof(LicenseSettings.DefaultLicensingKey)} not set");
+                    }
+                    if (settings.DefaultProductBundle == null)
+                    {
+                        ModelState.AddModelError(nameof(LicenseSettings), $"{nameof(LicenseSettings)}.{nameof(LicenseSettings.DefaultProductBundle)} not set");
+                    }
+                }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 return Ok(new OutLicenseModel
                 {
 

@@ -62,7 +62,15 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
                         var machineKey = await deviceIdProvider.GetDeviceIdAsync();
                         var trialResult = await licenseClient.LicensesRequestTrialAsync(new InRequestTrialModel(machineKey));
                     }
-                    catch (LicenseApiException ex) when (ex.StatusCode == 400)
+                    catch (LicenseApiException<IDictionary<string, object>> ex) when (ex.StatusCode == 400)
+                    {
+                        WriteLine($"ERROR");
+                        foreach (var error in ex.Result)
+                        {
+                            WriteLine($"{error.Key}: {error.Value}");
+                        }
+                    }
+                    catch (LicenseApiException ex) when (ex.StatusCode == 400 || ex.StatusCode == 500)
                     {
                         WriteLine($"ERROR {ex}");
                     }

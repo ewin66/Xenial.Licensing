@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using DevExpress.Xpo;
 using DevExpress.Xpo.DB;
 
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,9 @@ namespace Xenial.Licensing.Api.Controllers
 {
     public static class XpoExtentions
     {
+        public static Task<T> GetSingletonAsync<T>(this UnitOfWork unitOfWork)
+            => unitOfWork.FindObjectAsync<T>(null);
+
         public static IServiceCollection AddXpo(
             this IServiceCollection services,
             IConfiguration configuration,

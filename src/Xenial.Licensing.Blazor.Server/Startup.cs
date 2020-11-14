@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Blazor.Reporting;
 using DevExpress.ExpressApp.ReportsV2.Blazor;
 using DevExpress.ExpressApp.Blazor.Services;
-using DevExpress.Persistent.Base;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -177,7 +173,6 @@ namespace Xenial.Licensing.Blazor.Server
                 .AddOpenIdConnect("Xenial", "Xenial", options => { });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -198,11 +193,6 @@ namespace Xenial.Licensing.Blazor.Server
             {
                 if (!context.User.Identity.IsAuthenticated)
                 {
-                    //var xafApplicationProvider = context.RequestServices.GetService<IXafApplicationProvider>();
-                    //var application = xafApplicationProvider.GetApplication();
-                    //application.Setup();
-
-                    //var xafApplicationLogonService = context.RequestServices.GetService<IXafApplicationLogonService>();
                     await context.ChallengeAsync("Xenial");
                 }
                 else

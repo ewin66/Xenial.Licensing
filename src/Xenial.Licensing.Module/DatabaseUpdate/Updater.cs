@@ -28,6 +28,7 @@ namespace Xenial.Licensing.Module.DatabaseUpdate
                 adminRole.Name = "Administrator";
             }
             adminRole.IsAdministrative = true;
+            CreateDefaultRole();
             ObjectSpace.CommitChanges();
 
             foreach (var typeinfo in ObjectSpace.TypesInfo.PersistentTypes.Where(p => p.IsAttributeDefined<SingletonAttribute>(true)))
