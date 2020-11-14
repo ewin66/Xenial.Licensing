@@ -29,12 +29,12 @@ namespace Xenial.Licensing.Cli.XenialLicenseApi
     
         /// <returns>Success</returns>
         /// <exception cref="LicenseApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OutLicenseModel> LicensesNewTrialAsync(InRequestTrialModel body);
+        System.Threading.Tasks.Task<OutLicenseModel> LicensesRequestTrialAsync(InRequestTrialModel body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="LicenseApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OutLicenseModel> LicensesNewTrialAsync(InRequestTrialModel body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<OutLicenseModel> LicensesRequestTrialAsync(InRequestTrialModel body, System.Threading.CancellationToken cancellationToken);
     
     }
     
@@ -160,18 +160,18 @@ namespace Xenial.Licensing.Cli.XenialLicenseApi
     
         /// <returns>Success</returns>
         /// <exception cref="LicenseApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<OutLicenseModel> LicensesNewTrialAsync(InRequestTrialModel body)
+        public System.Threading.Tasks.Task<OutLicenseModel> LicensesRequestTrialAsync(InRequestTrialModel body)
         {
-            return LicensesNewTrialAsync(body, System.Threading.CancellationToken.None);
+            return LicensesRequestTrialAsync(body, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="LicenseApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<OutLicenseModel> LicensesNewTrialAsync(InRequestTrialModel body, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<OutLicenseModel> LicensesRequestTrialAsync(InRequestTrialModel body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Licenses/new/trial");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Licenses/request/trial");
     
             var client_ = _httpClient;
             var disposeClient_ = false;

@@ -16,20 +16,36 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
         private readonly ILicenseQuery licenseQuery;
         private readonly ILicenseClient licenseClient;
         private readonly IDeviceIdProvider deviceIdProvider;
+        private readonly IUserInfoProvider userInfoProvider;
 
         public DefaultWelcomeCommand(
             ILicenseQuery licenseQuery,
             ILicenseClient licenseClient,
-            IDeviceIdProvider deviceIdProvider
+            IDeviceIdProvider deviceIdProvider,
+            IUserInfoProvider userInfoProvider
         )
         {
             this.licenseQuery = licenseQuery;
             this.licenseClient = licenseClient;
             this.deviceIdProvider = deviceIdProvider;
+            this.userInfoProvider = userInfoProvider;
         }
 
         public async Task<int> Execute()
         {
+            WriteLine("Fetching user information...");
+
+            var userInfo = await userInfoProvider.GetUserInfoAsync();
+            if (userInfo == null)
+            {
+                WriteLine("ERROR: Cannot fetch user information");
+                return -1;
+            }
+
+            WriteLine($"Hello {userInfo.UserName}!");
+            WriteLine($"Id:    {userInfo.UserId}");
+            WriteLine($"Email: {userInfo.Email}");
+
             WriteLine("Fetching active licenses...");
 
             var result = await licenseQuery.HasActiveLicense();
@@ -44,7 +60,7 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
                     try
                     {
                         var machineKey = await deviceIdProvider.GetDeviceIdAsync();
-                        var trialResult = await licenseClient.LicensesNewTrialAsync(new InRequestTrialModel(machineKey));
+                        var trialResult = await licenseClient.LicensesRequestTrialAsync(new InRequestTrialModel(machineKey));
                     }
                     catch (LicenseApiException ex) when (ex.StatusCode == 400)
                     {

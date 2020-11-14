@@ -6,6 +6,7 @@ using AutoMapper.QueryableExtensions;
 
 using DevExpress.Xpo;
 
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,7 +56,7 @@ namespace Xenial.Licensing.Api.Controllers
         }
 
         [HttpPost]
-        [Route("new/trial")]
+        [Route("request/trial")]
         [ProducesResponseType(typeof(SerializableError), 400)]
         [ProducesResponseType(typeof(OutLicenseModel), 200)]
         public async Task<IActionResult> RequestTrial(InRequestTrialModel model)

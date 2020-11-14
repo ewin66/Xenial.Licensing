@@ -83,7 +83,7 @@
         ]
       }
     },
-    "/Licenses/new/trial": {
+    "/Licenses/request/trial": {
       "post": {
         "tags": [
           "Licenses"

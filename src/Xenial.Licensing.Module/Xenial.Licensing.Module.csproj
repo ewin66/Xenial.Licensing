@@ -35,4 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Xenial.Licensing.Model\Xenial.Licensing.Model.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BusinessObjects\ViewModels\" />
+  </ItemGroup>
 </Project>

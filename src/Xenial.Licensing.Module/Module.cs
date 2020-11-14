@@ -17,6 +17,7 @@ using DevExpress.ExpressApp.Model.DomainLogics;
 using DevExpress.ExpressApp.Model.NodeGenerators;
 using DevExpress.ExpressApp.Xpo;
 using Xenial.Licensing.Model;
+using Xenial.Licensing.Module.BusinessObjects;
 
 namespace Xenial.Licensing.Module
 {
@@ -39,6 +40,33 @@ namespace Xenial.Licensing.Module
         }
 
         protected override IEnumerable<Type> GetDeclaredExportedTypes()
-            => base.GetDeclaredExportedTypes().UseLicensingPersistentModels();
+            => base.GetDeclaredExportedTypes()
+                .UseLicensingPersistentModels()
+                .UseLicensingViewModels();
+
+        public override void Setup(XafApplication application)
+        {
+            base.Setup(application);
+            application.SetupComplete -= Application_SetupComplete;
+            application.SetupComplete += Application_SetupComplete;
+        }
+
+        private void Application_SetupComplete(object sender, EventArgs e)
+        {
+            Application.ObjectSpaceCreated -= Application_ObjectSpaceCreated;
+            Application.ObjectSpaceCreated += Application_ObjectSpaceCreated;
+        }
+
+        private void Application_ObjectSpaceCreated(object sender, ObjectSpaceCreatedEventArgs e)
+        {
+            var objectSpace = e.ObjectSpace as CompositeObjectSpace;
+            if (objectSpace != null)
+            {
+                if (!(objectSpace.Owner is CompositeObjectSpace))
+                {
+                    objectSpace.PopulateAdditionalObjectSpaces((XafApplication)sender);
+                }
+            }
+        }
     }
 }
