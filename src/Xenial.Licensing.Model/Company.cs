@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
@@ -57,6 +58,7 @@ namespace Xenial.Licensing.Model
         private string id = string.Empty;
 #pragma warning restore CS0649 
         [PersistentAlias(nameof(id))]
+        [Browsable(false)]
         public string Id => id;
 
         [Persistent("Name")]

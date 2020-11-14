@@ -18,6 +18,7 @@ namespace Xenial.Licensing.Model
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "Needed by XPO")]
         private int id = -1;
         [PersistentAlias(nameof(id))]
+        [Browsable(false)]
         public int Id => id;
     }
 }

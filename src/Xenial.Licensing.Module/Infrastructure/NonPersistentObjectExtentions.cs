@@ -10,6 +10,8 @@ namespace Xenial.Licensing.Module.Infrastructure
 {
     public static class NonPersistentObjectExtentions
     {
+        public static T GetSingleton<T>(this IObjectSpace objectSpace)
+            => objectSpace.FindObject<T>(null, true);
 
         /// <summary>
         /// Returns an <see cref="IObjectSpace"/> for the specified type.

@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Text;
-using System.Linq;
-using DevExpress.ExpressApp;
-using System.ComponentModel;
-using DevExpress.ExpressApp.DC;
 using System.Collections.Generic;
-using DevExpress.Persistent.Base;
-using DevExpress.Persistent.BaseImpl;
-using DevExpress.Persistent.BaseImpl.PermissionPolicy;
-using DevExpress.ExpressApp.Model;
-using DevExpress.ExpressApp.Actions;
-using DevExpress.ExpressApp.Editors;
+
+using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Updating;
 using DevExpress.ExpressApp.Model.Core;
-using DevExpress.ExpressApp.Model.DomainLogics;
-using DevExpress.ExpressApp.Model.NodeGenerators;
 using DevExpress.ExpressApp.Xpo;
+
 using Xenial.Licensing.Model;
 using Xenial.Licensing.Module.BusinessObjects;
+using Xenial.Licensing.Module.Infrastructure;
 
 namespace Xenial.Licensing.Module
 {
@@ -67,6 +59,12 @@ namespace Xenial.Licensing.Module
                     objectSpace.PopulateAdditionalObjectSpaces((XafApplication)sender);
                 }
             }
+        }
+
+        public override void AddGeneratorUpdaters(ModelNodesGeneratorUpdaters updaters)
+        {
+            base.AddGeneratorUpdaters(updaters);
+            updaters.Add(new SingletonNavigationItemNodesUpdater());
         }
     }
 }

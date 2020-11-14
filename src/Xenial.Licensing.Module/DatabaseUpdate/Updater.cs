@@ -6,6 +6,9 @@ using DevExpress.ExpressApp.Updating;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
+using System.Linq;
+using DevExpress.ExpressApp.DC;
+using Xenial.Licensing.Model.Infrastructure;
 
 namespace Xenial.Licensing.Module.DatabaseUpdate
 {
@@ -26,6 +29,16 @@ namespace Xenial.Licensing.Module.DatabaseUpdate
             }
             adminRole.IsAdministrative = true;
             ObjectSpace.CommitChanges();
+
+            foreach (var typeinfo in ObjectSpace.TypesInfo.PersistentTypes.Where(p => p.IsAttributeDefined<SingletonAttribute>(true)))
+            {
+                var singletonObject = ObjectSpace.FindObject(typeinfo.Type, null, true);
+                if (singletonObject == null)
+                {
+                    ObjectSpace.CreateObject(typeinfo.Type);
+                    ObjectSpace.CommitChanges();
+                }
+            }
         }
 
         private PermissionPolicyRole CreateDefaultRole()
