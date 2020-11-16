@@ -22,6 +22,8 @@ namespace Xenial.Licensing.Model
         private LicensingKey defaultLicensingKey;
         private ProductBundle defaultProductBundle;
         private string uniqueId;
+        private int defaultTrialPeriod;
+        private int defaultMaximumUtilization;
 
         public LicenseSettings(Session session) : base(session) { }
 
@@ -29,6 +31,8 @@ namespace Xenial.Licensing.Model
         {
             base.AfterConstruction();
             UniqueId = "6A566F71-F3EB-4AA5-A53D-FD61C76AF0E1";
+            DefaultTrialPeriod = 30;
+            DefaultMaximumUtilization = 3;
         }
 
         [Indexed(Unique = true)]
@@ -40,5 +44,11 @@ namespace Xenial.Licensing.Model
 
         [Persistent("ProductBundleId")]
         public ProductBundle DefaultProductBundle { get => defaultProductBundle; set => SetPropertyValue(ref defaultProductBundle, value); }
+
+        [Persistent("DefaultTrialPeriod")]
+        public int DefaultTrialPeriod { get => defaultTrialPeriod; set => SetPropertyValue(ref defaultTrialPeriod, value); }
+
+        [Persistent("DefaultMaximumUtilization")]
+        public int DefaultMaximumUtilization { get => defaultMaximumUtilization; set => SetPropertyValue(ref defaultMaximumUtilization, value); }
     }
 }

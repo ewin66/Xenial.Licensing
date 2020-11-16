@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Xenial.Licensing.Api.Mappers;
 using Xenial.Licensing.Model;
+using Xenial.Licensing.Model.Infrastructure;
 
 namespace Xenial.Licensing.Api.Controllers
 {
@@ -100,9 +102,19 @@ namespace Xenial.Licensing.Api.Controllers
                     return BadRequest(ModelState);
                 }
 
+                var license = new License(unitOfWork)
+                {
+                    User = await unitOfWork.GetObjectByKeyAsync<CompanyUser>(userId),
+                };
+
+                unitOfWork.Save(license);
+                unitOfWork.CommitChanges();
+
                 return Ok(new OutLicenseModel
                 {
-
+                    Id = license.Id,
+                    ExpiresAt = license.ExpiresAt.Value,
+                    License = license.GeneratedLicense.ToString(),
                 });
             }
             return BadRequest();
@@ -111,7 +123,8 @@ namespace Xenial.Licensing.Api.Controllers
 
     public class OutLicenseModel
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
+        public DateTime ExpiresAt { get; set; }
         public string License { get; set; }
     }
 

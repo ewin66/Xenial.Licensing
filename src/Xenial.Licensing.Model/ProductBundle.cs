@@ -8,15 +8,20 @@ namespace Xenial.Licensing.Model
 {
     [Persistent("ProductBundle")]
     [DefaultClassOptions]
-    public class ProductBundle : XenialLicenseBaseObjectId
+    public class ProductBundle : XenialLicenseBaseObject
     {
         private string name;
+        private Guid id = Guid.NewGuid();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductBundle"/> class.
         /// </summary>
         /// <param name="session">The session.</param>
         public ProductBundle(Session session) : base(session) { }
+
+        [Persistent("Id")]
+        [Key(AutoGenerate = false)]
+        public Guid Id { get => id; set => SetPropertyValue(ref id, value); }
 
         [Persistent("Name")]
         public string Name { get => name; set => SetPropertyValue(ref name, value); }

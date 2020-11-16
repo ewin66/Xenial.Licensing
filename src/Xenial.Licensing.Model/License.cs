@@ -3,6 +3,7 @@ using DevExpress.Xpo;
 using DevExpress.Xpo.Metadata;
 
 using System;
+using System.Linq;
 
 using Xenial.Licensing.Model.Infrastructure;
 
@@ -13,7 +14,7 @@ namespace Xenial.Licensing.Model
 
     [Persistent("License")]
     [DefaultClassOptions]
-    public class License : XenialLicenseBaseObjectId
+    public class License : XenialLicenseBaseObject
     {
         private LicenseType type;
         private DateTime? expiresAt;
@@ -23,6 +24,8 @@ namespace Xenial.Licensing.Model
         private LicensingKey? key;
         private CompanyUser? user;
         private ProductBundle? productBundle;
+        private Guid id = Guid.NewGuid();
+        private ProductVersion? productVersion;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="License"/> class.
@@ -33,8 +36,72 @@ namespace Xenial.Licensing.Model
         public override void AfterConstruction()
         {
             base.AfterConstruction();
-            ExpiresAt = DateTime.Now;
+            var settings = Session.FindObject<LicenseSettings>(null);
             Type = LicenseType.Trial;
+            if (settings != null)
+            {
+                ExpiresAt = DateTime.UtcNow.AddDays(settings.DefaultTrialPeriod).Date;
+                Key = settings.DefaultLicensingKey;
+                MaximumUtilization = settings.DefaultMaximumUtilization;
+                ProductBundle = settings.DefaultProductBundle;
+            }
+        }
+
+        protected override void OnSaving()
+        {
+            base.OnSaving();
+            var builder = Standard.Licensing.License.New()
+                .As((Standard.Licensing.LicenseType)Type)
+                .WithUniqueIdentifier(Id);
+
+            if (ExpiresAt.HasValue)
+            {
+                builder.ExpiresAt(ExpiresAt.Value.Date);
+            }
+
+            if (MaximumUtilization.HasValue)
+            {
+                builder.WithMaximumUtilization(MaximumUtilization.Value);
+            }
+
+            if (User != null)
+            {
+                builder.LicensedTo(c =>
+                {
+                    c.Company = User.Company?.Name;
+                    c.Name = User.Name;
+                    c.Email = User.Email;
+                });
+            }
+
+            builder.WithAdditionalAttributes(c =>
+            {
+                c.Add("CreatedAt", DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'"));
+                if (Key != null)
+                {
+                    c.Add("KeyId", Key.Id.ToString());
+                    c.Add("KeyName", Key.Name);
+                }
+
+                if (User != null)
+                {
+                    c.Add(nameof(Company.CompanyGlobalId), User.Company?.CompanyGlobalId?.ToString());
+                }
+                if (ProductBundle != null)
+                {
+                    c.Add("ProductBundle", ProductBundle.Name);
+                }
+            });
+
+            if (ProductBundle != null)
+            {
+                builder.WithProductFeatures(ProductBundle.Products.ToDictionary(i => i.Product.Name, _ => ProductVersion?.Version));
+            }
+
+            if (Key != null)
+            {
+                GeneratedLicense = builder.CreateAndSignWithPrivateKey(Key.PrivateKey, Key.PassPhrase);
+            }
         }
 
         public enum LicenseType
@@ -42,6 +109,10 @@ namespace Xenial.Licensing.Model
             Trial = 1,
             Standard = 2,
         }
+
+        [Persistent("Id")]
+        [Key(AutoGenerate = false)]
+        public Guid Id { get => id; set => SetPropertyValue(ref id, value); }
 
         [Persistent("Type")]
         public LicenseType Type { get => type; set => SetPropertyValue(ref type, value); }
@@ -69,6 +140,9 @@ namespace Xenial.Licensing.Model
 
         [Persistent("ProductBundleId")]
         public ProductBundle? ProductBundle { get => productBundle; set => SetPropertyValue(ref productBundle, value); }
+
+        [Persistent("ProductVersionId")]
+        public ProductVersion? ProductVersion { get => productVersion; set => SetPropertyValue(ref productVersion, value); }
     }
 
     [Persistent("LicenseProduct")]

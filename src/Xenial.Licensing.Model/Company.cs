@@ -8,10 +8,11 @@ namespace Xenial.Licensing.Model
 {
     [Persistent("Company")]
     [DefaultClassOptions]
-    public class Company : XenialLicenseBaseObjectId
+    public class Company : XenialLicenseBaseObject
     {
         private string name;
         private string companyGlobalId;
+        private Guid id = Guid.NewGuid();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Company"/> class.
@@ -27,6 +28,10 @@ namespace Xenial.Licensing.Model
             base.AfterConstruction();
             CompanyGlobalId = Guid.NewGuid().ToString();
         }
+
+        [Persistent("Id")]
+        [Key(AutoGenerate = false)]
+        public Guid Id { get => id; set => SetPropertyValue(ref id, value); }
 
         [Persistent("Name")]
         public string Name { get => name; set => SetPropertyValue(ref name, value); }

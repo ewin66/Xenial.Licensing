@@ -15,9 +15,6 @@ namespace Xenial.Licensing.Api.Controllers
 {
     public static class XpoExtentions
     {
-        public static Task<T> GetSingletonAsync<T>(this UnitOfWork unitOfWork)
-            => unitOfWork.FindObjectAsync<T>(null);
-
         public static IServiceCollection AddXpo(
             this IServiceCollection services,
             IConfiguration configuration,
