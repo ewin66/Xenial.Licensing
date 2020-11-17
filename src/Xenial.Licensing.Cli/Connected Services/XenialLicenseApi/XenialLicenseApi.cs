@@ -362,14 +362,18 @@ namespace Xenial.Licensing.Cli.XenialLicenseApi
     public partial class OutLicenseModel 
     {
         [Newtonsoft.Json.JsonConstructor]
-        public OutLicenseModel(string @id, string @license)
+        public OutLicenseModel(System.DateTimeOffset @expiresAt, System.Guid @id, string @license)
         {
             this.Id = @id;
+            this.ExpiresAt = @expiresAt;
             this.License = @license;
         }
     
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Id { get; }
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; }
+    
+        [Newtonsoft.Json.JsonProperty("expiresAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset ExpiresAt { get; }
     
         [Newtonsoft.Json.JsonProperty("license", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string License { get; }

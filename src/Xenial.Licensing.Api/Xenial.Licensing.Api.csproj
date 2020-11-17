@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Xenial.Licensing.Domain\Xenial.Licensing.Domain.csproj" />
     <ProjectReference Include="..\Xenial.Licensing.Model\Xenial.Licensing.Model.csproj" />
   </ItemGroup>
 

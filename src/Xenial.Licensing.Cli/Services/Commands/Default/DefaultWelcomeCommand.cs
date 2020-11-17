@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 using Xenial.Licensing.Cli.Services.Queries;
 using Xenial.Licensing.Cli.XenialLicenseApi;
@@ -61,6 +62,7 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
                     {
                         var machineKey = await deviceIdProvider.GetDeviceIdAsync();
                         var trialResult = await licenseClient.LicensesRequestTrialAsync(new InRequestTrialModel(machineKey));
+                        WriteLine(FormatXml(trialResult.License));
                     }
                     catch (LicenseApiException<IDictionary<string, object>> ex) when (ex.StatusCode == 400)
                     {
@@ -78,6 +80,19 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
             }
 
             return 0;
+            static string FormatXml(string xml)
+            {
+                try
+                {
+                    var doc = XDocument.Parse(xml);
+                    return doc.ToString();
+                }
+                catch (Exception)
+                {
+                    // Handle and throw if fatal exception here; don't just ignore them
+                    return xml;
+                }
+            }
         }
     }
 }

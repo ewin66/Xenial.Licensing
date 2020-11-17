@@ -7,7 +7,6 @@ using AutoMapper.QueryableExtensions;
 
 using DevExpress.Xpo;
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -71,7 +70,48 @@ namespace Xenial.Licensing.Api.Controllers
                     ModelState.AddModelError("sub", "no sub claim");
                     return BadRequest(ModelState);
                 }
+
+                var settings = await unitOfWork.GetSingletonAsync<LicenseSettings>();
+
+                ValidateSettings(settings);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 var userId = idClaim.Value;
+
+                var trialRequest = await unitOfWork.Query<TrialRequest>()
+                    .Where(trial => trial.UserId == userId)
+                    .OrderByDescending(trial => trial.RequestDate)
+                    .FirstOrDefaultAsync();
+
+                if (trialRequest != null)
+                {
+                    if ((trialRequest.RequestDate - DateTime.UtcNow.Date).TotalDays < settings.DefaultTrialCooldown)
+                    {
+                        //Last trial request is older than 1 year / DefaultTrialCooldown
+                    }
+
+                    //Need to lockout from new trial
+                }
+
+                var trialRequests = await unitOfWork.Query<TrialRequest>()
+                    .Where(trial => trial.MachineKey == model.MachineKey)
+                    .OrderByDescending(trial => trial.RequestDate)
+                    .Take(2)
+                    .ToListAsync();
+
+                if (trialRequests.Count <= 2) //We allow a second trial with a different email
+                {
+
+                }
+                else //We have a second trial request on the same machine with a different email
+                {
+
+                }
+
                 var trialRequest = new TrialRequest(unitOfWork)
                 {
                     MachineKey = model.MachineKey,
@@ -80,27 +120,6 @@ namespace Xenial.Licensing.Api.Controllers
 
                 await unitOfWork.SaveAsync(trialRequest);
                 await unitOfWork.CommitChangesAsync();
-
-                var settings = await unitOfWork.GetSingletonAsync<LicenseSettings>();
-                if (settings == null)
-                {
-                    ModelState.AddModelError(nameof(LicenseSettings), $"{nameof(LicenseSettings)} not found");
-                }
-                else
-                {
-                    if (settings.DefaultLicensingKey == null)
-                    {
-                        ModelState.AddModelError(nameof(LicenseSettings), $"{nameof(LicenseSettings)}.{nameof(LicenseSettings.DefaultLicensingKey)} not set");
-                    }
-                    if (settings.DefaultProductBundle == null)
-                    {
-                        ModelState.AddModelError(nameof(LicenseSettings), $"{nameof(LicenseSettings)}.{nameof(LicenseSettings.DefaultProductBundle)} not set");
-                    }
-                }
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
 
                 var license = new License(unitOfWork)
                 {
@@ -118,6 +137,25 @@ namespace Xenial.Licensing.Api.Controllers
                 });
             }
             return BadRequest();
+
+            void ValidateSettings(LicenseSettings settings)
+            {
+                if (settings == null)
+                {
+                    ModelState.AddModelError(nameof(LicenseSettings), $"{nameof(LicenseSettings)} not found");
+                }
+                else
+                {
+                    if (settings.DefaultLicensingKey == null)
+                    {
+                        ModelState.AddModelError(nameof(LicenseSettings), $"{nameof(LicenseSettings)}.{nameof(LicenseSettings.DefaultLicensingKey)} not set");
+                    }
+                    if (settings.DefaultProductBundle == null)
+                    {
+                        ModelState.AddModelError(nameof(LicenseSettings), $"{nameof(LicenseSettings)}.{nameof(LicenseSettings.DefaultProductBundle)} not set");
+                    }
+                }
+            }
         }
     }
 

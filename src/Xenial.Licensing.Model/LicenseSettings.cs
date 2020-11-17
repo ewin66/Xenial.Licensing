@@ -24,6 +24,7 @@ namespace Xenial.Licensing.Model
         private string uniqueId;
         private int defaultTrialPeriod;
         private int defaultMaximumUtilization;
+        private int defaultTrialCooldown;
 
         public LicenseSettings(Session session) : base(session) { }
 
@@ -32,6 +33,7 @@ namespace Xenial.Licensing.Model
             base.AfterConstruction();
             UniqueId = "6A566F71-F3EB-4AA5-A53D-FD61C76AF0E1";
             DefaultTrialPeriod = 30;
+            DefaultTrialCooldown = 365;
             DefaultMaximumUtilization = 3;
         }
 
@@ -47,6 +49,9 @@ namespace Xenial.Licensing.Model
 
         [Persistent("DefaultTrialPeriod")]
         public int DefaultTrialPeriod { get => defaultTrialPeriod; set => SetPropertyValue(ref defaultTrialPeriod, value); }
+
+        [Persistent("DefaultTrialCooldown")]
+        public int DefaultTrialCooldown { get => defaultTrialCooldown; set => SetPropertyValue(ref defaultTrialCooldown, value); }
 
         [Persistent("DefaultMaximumUtilization")]
         public int DefaultMaximumUtilization { get => defaultMaximumUtilization; set => SetPropertyValue(ref defaultMaximumUtilization, value); }
