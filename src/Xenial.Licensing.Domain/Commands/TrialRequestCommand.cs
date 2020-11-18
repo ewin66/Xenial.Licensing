@@ -108,6 +108,7 @@ namespace Xenial.Licensing.Domain.Commands
                     Id = command.UserId
                 };
             }
+
             var license = new License(unitOfWork)
             {
                 User = user,
