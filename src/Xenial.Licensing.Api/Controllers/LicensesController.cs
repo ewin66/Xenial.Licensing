@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Xenial.Licensing.Api.Mappers;
+using Xenial.Licensing.Domain;
 using Xenial.Licensing.Domain.Commands;
 using Xenial.Licensing.Model;
 using Xenial.Licensing.Model.Infrastructure;
@@ -24,7 +25,7 @@ namespace Xenial.Licensing.Api.Controllers
     {
         private readonly UnitOfWork unitOfWork;
 
-        public LicensesController(DevExpress.Xpo.UnitOfWork unitOfWork)
+        public LicensesController(UnitOfWork unitOfWork)
             => this.unitOfWork = unitOfWork;
 
         /// <summary>
@@ -45,12 +46,19 @@ namespace Xenial.Licensing.Api.Controllers
                     ModelState.AddModelError("sub", "no sub claim");
                     return BadRequest(ModelState);
                 }
+
                 var id = idClaim.Value;
+                var expired = DateTime.UtcNow.Date;
+
                 var licenses = await unitOfWork
                     .Query<GrantedLicense>()
-                    .Where(l => l.User != null && l.User.Id == id)
+                    .Where(l => l.User != null && l.User.Id == id && l.ExpiresNever || l.ExpiresAt >= expired)
                     .ProjectTo<OutLicenseModel>(LicenseMapper.Mapper.ConfigurationProvider)
                     .ToListAsync();
+
+                licenses = licenses
+                    .Where(l => !Standard.Licensing.License.Load(l.License).HasExpired())
+                    .ToList();
 
                 return Ok(licenses);
             }
@@ -100,6 +108,7 @@ namespace Xenial.Licensing.Api.Controllers
                     ModelState.AddModelError(nameof(TrialRequestCommandHandler), ex.Message);
                 }
             }
+
             return BadRequest();
 
             void ValidateSettings(LicenseSettings settings)

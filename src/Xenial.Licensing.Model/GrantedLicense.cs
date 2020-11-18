@@ -11,7 +11,6 @@ using Xenial.Licensing.Model.Infrastructure;
 
 namespace Xenial.Licensing.Model
 {
-
     [Persistent("GrantedLicense")]
     [DefaultClassOptions]
     public class GrantedLicense : XenialLicenseBaseObject

@@ -128,6 +128,7 @@ namespace Xenial.Licensing.Domain.Commands
             }
             else
             {
+                var expired = DateTime.UtcNow.Date;
                 var expireTrial = licenses
                     .Where(l => l.ExpiresAt.HasValue)
                     .OrderBy(l => l.ExpiresAt.Value)
