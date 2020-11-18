@@ -11,7 +11,7 @@ namespace Xenial.Licensing.Model
     public class ProductBundle : XenialLicenseBaseObject
     {
         private string name;
-        private Guid id = Guid.NewGuid();
+        private string id = IdentityModel.CryptoRandom.CreateUniqueId();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductBundle"/> class.
@@ -21,7 +21,8 @@ namespace Xenial.Licensing.Model
 
         [Persistent("Id")]
         [Key(AutoGenerate = false)]
-        public Guid Id { get => id; set => SetPropertyValue(ref id, value); }
+        [DevExpress.ExpressApp.Model.ModelDefault("AllowEdit", "False")]
+        public string Id { get => id; set => SetPropertyValue(ref id, value); }
 
         [Persistent("Name")]
         public string Name { get => name; set => SetPropertyValue(ref name, value); }
@@ -48,6 +49,7 @@ namespace Xenial.Licensing.Model
         public ProductBundle Bundle { get => bundle; set => SetPropertyValue(ref bundle, value); }
 
         [Persistent("ProductId")]
+        [DevExpress.Persistent.Validation.RuleRequiredField]
         public Product Product { get => product; set => SetPropertyValue(ref product, value); }
 
     }

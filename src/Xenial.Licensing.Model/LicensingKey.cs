@@ -1,22 +1,31 @@
 ﻿using DevExpress.Persistent.Base;
 using DevExpress.Xpo;
 
+using IdentityModel;
+
 namespace Xenial.Licensing.Model
 {
     [Persistent("LicensingKey")]
     [DefaultClassOptions]
-    public class LicensingKey : XenialLicenseBaseObjectId
+    public class LicensingKey : XenialLicenseBaseObject
     {
         private string name;
         private string passPhrase;
         private string privateKey;
         private string publicKey;
+        private string id = CryptoRandom.CreateUniqueId();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LicensingKey"/> class.
         /// </summary>
         /// <param name="session">The session.</param>
         public LicensingKey(Session session) : base(session) { }
+
+        [Persistent("Id")]
+        [Key(AutoGenerate = false)]
+        [Size(100)]
+        [DevExpress.ExpressApp.Model.ModelDefault("AllowEdit", "False")]
+        public string Id { get => id; set => SetPropertyValue(ref id, value); }
 
         [Persistent("Name")]
         public string Name { get => name; set => SetPropertyValue(ref name, value); }

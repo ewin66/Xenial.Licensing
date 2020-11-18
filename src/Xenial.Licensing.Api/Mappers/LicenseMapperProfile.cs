@@ -15,6 +15,11 @@ namespace Xenial.Licensing.Api.Mappers
                     o.Condition(i => i.GeneratedLicense != null);
                     o.MapFrom(i => i.GeneratedLicense);
                 })
+                .ForMember(m => m.PublicKey, o =>
+                {
+                    o.Condition(i => i.Key != null);
+                    o.MapFrom(i => i.Key.PublicKey);
+                })
                 .ReverseMap()
                 .ConstructUsingServiceLocator();
     }

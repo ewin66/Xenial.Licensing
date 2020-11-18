@@ -101,6 +101,7 @@ namespace Xenial.Licensing.Api.Controllers
                         Id = trialLicence.Id,
                         ExpiresAt = trialLicence.ExpiresAt,
                         License = trialLicence.License,
+                        PublicKey = trialLicence.PublicKey
                     });
                 }
                 catch (Exception ex)
@@ -137,6 +138,7 @@ namespace Xenial.Licensing.Api.Controllers
         public Guid Id { get; set; }
         public DateTime ExpiresAt { get; set; }
         public string License { get; set; }
+        public string PublicKey { get; set; }
     }
 
     public class InRequestTrialModel

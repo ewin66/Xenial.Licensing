@@ -12,7 +12,7 @@ using Xenial.Licensing.Model.Infrastructure;
 namespace Xenial.Licensing.Domain.Commands
 {
     public record TrialRequestCommand(string UserId, string MachineKey, int? DefaultTrialCooldown, int? DefaultTrialPeriod);
-    public record TrialRequestResult(Guid Id, string License, DateTime ExpiresAt);
+    public record TrialRequestResult(Guid Id, string License, string PublicKey, DateTime ExpiresAt);
 
     public class TrialRequestCommandHandler
     {
@@ -107,7 +107,12 @@ namespace Xenial.Licensing.Domain.Commands
                 throw new ArgumentException($"License must have {nameof(license.ExpiresAt)} set for a trial request.");
             }
 
-            return new TrialRequestResult(license.Id, license.GeneratedLicense.ToString(), license.ExpiresAt.Value);
+            return new TrialRequestResult(
+                license.Id,
+                license.GeneratedLicense.ToString(),
+                license.Key.PublicKey,
+                license.ExpiresAt.Value
+            );
         }
 
         private async Task<TrialRequestResult> FetchExistingTrial(TrialRequestCommand command)
@@ -124,7 +129,12 @@ namespace Xenial.Licensing.Domain.Commands
             if (licenses.Any(l => l.ExpiresNever))
             {
                 var neverExpireTrial = licenses.First(l => l.ExpiresNever);
-                return new TrialRequestResult(neverExpireTrial.Id, neverExpireTrial.GeneratedLicense.ToString(), DateTime.MaxValue);
+                return new TrialRequestResult(
+                    neverExpireTrial.Id,
+                    neverExpireTrial.GeneratedLicense.ToString(),
+                    neverExpireTrial.Key.PublicKey,
+                    DateTime.MaxValue
+                );
             }
             else
             {
@@ -136,7 +146,12 @@ namespace Xenial.Licensing.Domain.Commands
 
                 if (expireTrial != null)
                 {
-                    return new TrialRequestResult(expireTrial.Id, expireTrial.GeneratedLicense.ToString(), expireTrial.ExpiresAt.Value.ToUniversalTime());
+                    return new TrialRequestResult(
+                        expireTrial.Id,
+                        expireTrial.GeneratedLicense.ToString(),
+                        expireTrial.Key.PublicKey,
+                        expireTrial.ExpiresAt.Value.ToUniversalTime()
+                    );
                 }
             }
 
