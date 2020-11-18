@@ -24,7 +24,7 @@ namespace Xenial.Licensing.Tests.Domain
         {
             var dataLayer = XpoDefault.GetDataLayer(connectionString, DevExpress.Xpo.DB.AutoCreateOption.DatabaseAndSchema);
             using var unitOfWork = new UnitOfWork(dataLayer);
-            var settings = CreateDefaultSettings(unitOfWork);
+            var settings = unitOfWork.CreateDefaultSettings();
 
             unitOfWork.UpdateSchema();
             unitOfWork.Save(settings);
@@ -89,12 +89,8 @@ namespace Xenial.Licensing.Tests.Domain
                         () => trial.ExpiresAt.Value.Date.Date.ShouldBe(DateTime.Today.AddDays(settings.DefaultTrialPeriod)),
                         () => trial.License.ShouldNotBeNull(),
                         () => Standard.Licensing.License.Load(trial.License)
-                                .Validate()
-                                .ExpirationDate()
-                                .And()
-                                .Signature(settings.DefaultLicensingKey.PublicKey)
-                                .AssertValidLicense()
-                                .ToList().Any().ShouldBe(false, "License is not valid")
+                                .IsLicenseValid(settings)
+                                .ShouldBe(true, "License should be valid, but is invalid")
                     );
                 });
 
@@ -110,12 +106,8 @@ namespace Xenial.Licensing.Tests.Domain
                     persistentTrial.ShouldSatisfyAllConditions(
                         () => persistentTrial.GeneratedLicense.ShouldNotBeNull(),
                         () => persistentTrial.GeneratedLicense
-                                .Validate()
-                                .ExpirationDate()
-                                .And()
-                                .Signature(settings.DefaultLicensingKey.PublicKey)
-                                .AssertValidLicense()
-                                .ToList().Any().ShouldBe(true, "License is valid")
+                                .IsLicenseValid(settings)
+                                .ShouldBe(false, "License is valid, but should be invalid")
                     );
                 });
 
@@ -139,11 +131,43 @@ namespace Xenial.Licensing.Tests.Domain
                     );
                 });
 
+                It("third trial with same machine key after cooldown should be valid", async () =>
+                {
+                    var machine = Guid.NewGuid().ToString();
+                    await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), machine, null, null));
+                    await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), machine, null, null));
+
+                    using var uow = new UnitOfWork(dataLayer);
+                    foreach (var trialRequest in await uow.Query<TrialRequest>().Where(t => t.MachineKey == machine).ToListAsync())
+                    {
+                        trialRequest.RequestDate = DateTime.UtcNow.AddDays((settings.DefaultTrialCooldown * -1) - 1);
+                        await uow.SaveAsync(trialRequest);
+                    }
+
+                    await uow.CommitChangesAsync();
+
+                    var trial = await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), machine, null, null));
+
+                    trial.ShouldSatisfyAllConditions(
+                        () => trial.ShouldNotBeNull(),
+                        () => Standard.Licensing.License.Load(trial.License)
+                                .IsLicenseValid(settings)
+                                .ShouldBeTrue("License should be valid, but was not")
+                    );
+                });
 
             });
         });
 
-        private static LicenseSettings CreateDefaultSettings(UnitOfWork unitOfWork)
+        private static bool IsLicenseValid(this Standard.Licensing.License license, LicenseSettings settings)
+            => !license.Validate()
+                .ExpirationDate()
+                .And()
+                .Signature(settings.DefaultLicensingKey.PublicKey)
+                .AssertValidLicense()
+                .ToList().Any();
+
+        private static LicenseSettings CreateDefaultSettings(this UnitOfWork unitOfWork)
         {
             var key = new LicensingKey(unitOfWork);
             key.PassPhrase = "This is the passphrase";

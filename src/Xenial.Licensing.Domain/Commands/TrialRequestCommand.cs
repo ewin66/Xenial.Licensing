@@ -34,18 +34,15 @@ namespace Xenial.Licensing.Domain.Commands
                 command = command with { DefaultTrialPeriod = settings.DefaultTrialPeriod };
             }
 
+            var cooldownTime = DateTime.Today.AddDays(command.DefaultTrialCooldown.Value * -1);
+
             var trialRequest = await unitOfWork.Query<TrialRequest>()
-                   .Where(trial => trial.UserId == command.UserId)
+                   .Where(trial => trial.UserId == command.UserId && trial.RequestDate > cooldownTime)
                    .OrderByDescending(trial => trial.RequestDate)
                    .FirstOrDefaultAsync();
 
             if (trialRequest != null)
             {
-                if ((trialRequest.RequestDate - DateTime.UtcNow.Date).TotalDays < settings.DefaultTrialCooldown)
-                {
-                    //Last trial request is older than 1 year / DefaultTrialCooldown
-                }
-
                 var existingTrialResult = await FetchExistingTrial(command);
                 if (existingTrialResult != null)
                 {
@@ -54,13 +51,14 @@ namespace Xenial.Licensing.Domain.Commands
             }
 
             var trialRequests = await unitOfWork.Query<TrialRequest>()
-                .Where(trial => trial.MachineKey == command.MachineKey)
+                .Where(trial => trial.MachineKey == command.MachineKey && trial.RequestDate > cooldownTime)
                 .OrderByDescending(trial => trial.RequestDate)
                 .Take(2)
                 .ToListAsync();
 
-            if (trialRequests.Count >= 2) //We allow a second trial with a different email
+            if (trialRequests.Count >= 2)
             {
+                //We allow a second trial with a different email from the same machine
                 //We have a third trial request on the same machine with a different email
                 throw new InvalidOperationException("You cannot request a new trial, please contact support");
             }
