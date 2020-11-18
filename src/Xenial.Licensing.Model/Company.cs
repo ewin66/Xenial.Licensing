@@ -49,6 +49,7 @@ namespace Xenial.Licensing.Model
         private string name;
         private string email;
         private Company company;
+        private string id;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyUser"/> class.
@@ -56,15 +57,10 @@ namespace Xenial.Licensing.Model
         /// <param name="session">The session.</param>
         public CompanyUser(Session session) : base(session) { }
 
-        [Key]
+        [Key(AutoGenerate = false)]
         [Persistent("Id")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "Needed by XPO")]
-#pragma warning disable CS0649 //Needed by XPO
-        private string id = string.Empty;
-#pragma warning restore CS0649 
-        [PersistentAlias(nameof(id))]
-        [Browsable(false)]
-        public string Id => id;
+        [Size(100)]
+        public string Id { get => id; set => SetPropertyValue(ref id, value); }
 
         [Persistent("Name")]
         public string Name { get => name; set => SetPropertyValue(ref name, value); }

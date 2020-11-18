@@ -56,6 +56,14 @@ namespace Xenial.Licensing.Tests.Domain
                                 .ToList().Any().ShouldBe(false, "License is not valid")
                     );
                 });
+
+                It("With existing valid trial license gets the same", async () =>
+                {
+                    var trial1 = await ExecuteCommand(new TrialRequestCommand("ExistingUser", "Machine1", null, null));
+                    var trial2 = await ExecuteCommand(new TrialRequestCommand("ExistingUser", "Machine1", null, null));
+
+                    trial1.ShouldBeEquivalentTo(trial2);
+                });
             });
         });
 

@@ -34,6 +34,33 @@ namespace Xenial.Licensing.Domain.Commands
                 command = command with { DefaultTrialPeriod = settings.DefaultTrialPeriod };
             }
 
+            var licenses = await unitOfWork.Query<License>()
+                .Where(l =>
+                    l.User != null
+                    && l.User.Id == command.UserId
+                    && l.Type == License.LicenseType.Trial
+                    && (l.ExpiresAt.HasValue || l.ExpiresNever)
+                )
+                .ToListAsync();
+
+            if (licenses.Any(l => l.ExpiresNever))
+            {
+                var neverExpireTrial = licenses.First(l => l.ExpiresNever);
+                return new TrialRequestResult(neverExpireTrial.Id, neverExpireTrial.GeneratedLicense.ToString(), DateTime.MaxValue);
+            }
+            else
+            {
+                var expireTrial = licenses
+                    .Where(l => l.ExpiresAt.HasValue)
+                    .OrderBy(l => l.ExpiresAt.Value)
+                    .FirstOrDefault();
+
+                if (expireTrial != null)
+                {
+                    return new TrialRequestResult(expireTrial.Id, expireTrial.GeneratedLicense.ToString(), expireTrial.ExpiresAt.Value);
+                }
+            }
+
             var trialRequest = await unitOfWork.Query<TrialRequest>()
                    .Where(trial => trial.UserId == command.UserId)
                    .OrderByDescending(trial => trial.RequestDate)
@@ -73,9 +100,17 @@ namespace Xenial.Licensing.Domain.Commands
             await unitOfWork.SaveAsync(trialRequest);
             await unitOfWork.CommitChangesAsync();
 
+            var user = await unitOfWork.GetObjectByKeyAsync<CompanyUser>(command.UserId);
+            if (user == null)
+            {
+                user = new CompanyUser(unitOfWork)
+                {
+                    Id = command.UserId
+                };
+            }
             var license = new License(unitOfWork)
             {
-                User = await unitOfWork.GetObjectByKeyAsync<CompanyUser>(command.UserId),
+                User = user,
             };
 
             await unitOfWork.SaveAsync(license);
