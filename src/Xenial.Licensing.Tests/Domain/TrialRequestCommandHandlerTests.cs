@@ -45,8 +45,7 @@ namespace Xenial.Licensing.Tests.Domain
                     trial.ShouldSatisfyAllConditions(
                         () => trial.ShouldNotBeNull(),
                         () => trial.Id.ShouldNotBe(default),
-                        () => trial.ExpiresAt.ShouldNotBeNull(),
-                        () => trial.ExpiresAt.Value.Date.Date.ShouldBe(DateTime.Today.AddDays(settings.DefaultTrialPeriod)),
+                        () => trial.ExpiresAt.Date.ShouldBe(DateTime.Today.AddDays(settings.DefaultTrialPeriod)),
                         () => trial.License.ShouldNotBeNull(),
                         () => Standard.Licensing.License.Load(trial.License)
                                 .Validate()
@@ -85,8 +84,7 @@ namespace Xenial.Licensing.Tests.Domain
                     trial.ShouldSatisfyAllConditions(
                         () => trial.ShouldNotBeNull(),
                         () => trial.Id.ShouldNotBe(default),
-                        () => trial.ExpiresAt.ShouldNotBeNull(),
-                        () => trial.ExpiresAt.Value.Date.Date.ShouldBe(DateTime.Today.AddDays(settings.DefaultTrialPeriod)),
+                        () => trial.ExpiresAt.Date.ShouldBe(DateTime.Today.AddDays(settings.DefaultTrialPeriod)),
                         () => trial.License.ShouldNotBeNull(),
                         () => Standard.Licensing.License.Load(trial.License)
                                 .IsLicenseValid(settings)

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Xenial.Licensing.Api.Mappers;
+using Xenial.Licensing.Domain.Commands;
 using Xenial.Licensing.Model;
 using Xenial.Licensing.Model.Infrastructure;
 
@@ -82,59 +83,22 @@ namespace Xenial.Licensing.Api.Controllers
 
                 var userId = idClaim.Value;
 
-                var trialRequest = await unitOfWork.Query<TrialRequest>()
-                    .Where(trial => trial.UserId == userId)
-                    .OrderByDescending(trial => trial.RequestDate)
-                    .FirstOrDefaultAsync();
-
-                if (trialRequest != null)
+                try
                 {
-                    if ((trialRequest.RequestDate - DateTime.UtcNow.Date).TotalDays < settings.DefaultTrialCooldown)
+                    var trialLicence = await new TrialRequestCommandHandler(unitOfWork)
+                        .ExecuteAsync(new TrialRequestCommand(userId, model.MachineKey, null, null));
+
+                    return Ok(new OutLicenseModel
                     {
-                        //Last trial request is older than 1 year / DefaultTrialCooldown
-                    }
-
-                    //Need to lockout from new trial
+                        Id = trialLicence.Id,
+                        ExpiresAt = trialLicence.ExpiresAt,
+                        License = trialLicence.License,
+                    });
                 }
-
-                var trialRequests = await unitOfWork.Query<TrialRequest>()
-                    .Where(trial => trial.MachineKey == model.MachineKey)
-                    .OrderByDescending(trial => trial.RequestDate)
-                    .Take(2)
-                    .ToListAsync();
-
-                if (trialRequests.Count <= 2) //We allow a second trial with a different email
+                catch (Exception ex)
                 {
-
+                    ModelState.AddModelError(nameof(TrialRequestCommandHandler), ex.Message);
                 }
-                else //We have a second trial request on the same machine with a different email
-                {
-
-                }
-
-                var trialRequest = new TrialRequest(unitOfWork)
-                {
-                    MachineKey = model.MachineKey,
-                    UserId = userId
-                };
-
-                await unitOfWork.SaveAsync(trialRequest);
-                await unitOfWork.CommitChangesAsync();
-
-                var license = new License(unitOfWork)
-                {
-                    User = await unitOfWork.GetObjectByKeyAsync<CompanyUser>(userId),
-                };
-
-                unitOfWork.Save(license);
-                unitOfWork.CommitChanges();
-
-                return Ok(new OutLicenseModel
-                {
-                    Id = license.Id,
-                    ExpiresAt = license.ExpiresAt.Value,
-                    License = license.GeneratedLicense.ToString(),
-                });
             }
             return BadRequest();
 
