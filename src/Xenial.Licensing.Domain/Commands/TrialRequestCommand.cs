@@ -64,10 +64,10 @@ namespace Xenial.Licensing.Domain.Commands
 
             }
 
-            var trialRequest = new TrialRequest(unitOfWork)
+            trialRequest = new TrialRequest(unitOfWork)
             {
-                MachineKey = model.MachineKey,
-                UserId = userId
+                MachineKey = command.MachineKey,
+                UserId = command.UserId
             };
 
             await unitOfWork.SaveAsync(trialRequest);
