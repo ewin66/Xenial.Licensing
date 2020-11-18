@@ -27,7 +27,7 @@ namespace Xenial.Licensing.Api.Mappers
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public static OutLicenseModel ToModel(this License entity)
+        public static OutLicenseModel ToModel(this GrantedLicense entity)
             => entity == null ? null : Mapper.Map<OutLicenseModel>(entity);
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Xenial.Licensing.Api.Mappers
         /// </summary>
         /// <param name="model">The model.</param>
         /// <returns></returns>
-        public static License ToEntity(this OutLicenseModel model, Session session)
-            => model == null ? null : Mapper.Map<License>(model, opt => opt.ConstructServicesUsing(t => session.GetClassInfo(t).CreateObject(session)));
+        public static GrantedLicense ToEntity(this OutLicenseModel model, Session session)
+            => model == null ? null : Mapper.Map<GrantedLicense>(model, opt => opt.ConstructServicesUsing(t => session.GetClassInfo(t).CreateObject(session)));
     }
 }

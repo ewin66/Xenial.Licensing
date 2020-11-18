@@ -8,6 +8,7 @@ using Xenial.Licensing.Cli;
 using Xenial.Licensing.Cli.Services;
 using Xenial.Licensing.Cli.Services.Commands.Default;
 using Xenial.Licensing.Cli.Services.Default;
+using Xenial.Licensing.Cli.Services.Default.Storage;
 using Xenial.Licensing.Cli.Services.Queries;
 using Xenial.Licensing.Cli.Services.Queries.Default;
 using Xenial.Licensing.Cli.XenialLicenseApi;
@@ -38,6 +39,7 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
             services.AddTransient<IUserProfileProvider, DefaultUserProfileProvider>();
             services.AddTransient<IDeviceIdProvider, DefaultDeviceIdProvider>();
             services.AddTransient<IUserInfoProvider, DefaultUserInfoProvider>();
+            services.AddTransient<ILicenseStorage, AggregateLicenseStorage>();
 
             services.AddHttpClient<DefaultTokenProvider>();
             services.AddHttpClient(nameof(LicenseClient));

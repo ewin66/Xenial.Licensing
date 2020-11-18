@@ -9,7 +9,7 @@ namespace Xenial.Licensing.Api.Mappers
     public class LicenseMapperProfile : Profile
     {
         public LicenseMapperProfile()
-            => CreateMap<License, OutLicenseModel>()
+            => CreateMap<GrantedLicense, OutLicenseModel>()
                 .ForMember(m => m.License, o =>
                 {
                     o.Condition(i => i.GeneratedLicense != null);

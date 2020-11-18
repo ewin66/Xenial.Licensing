@@ -47,7 +47,7 @@ namespace Xenial.Licensing.Api.Controllers
                 }
                 var id = idClaim.Value;
                 var licenses = await unitOfWork
-                    .Query<License>()
+                    .Query<GrantedLicense>()
                     .Where(l => l.User != null && l.User.Id == id)
                     .ProjectTo<OutLicenseModel>(LicenseMapper.Mapper.ConfigurationProvider)
                     .ToListAsync();

@@ -96,7 +96,7 @@ namespace Xenial.Licensing.Tests.Domain
                 {
                     var trial = await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), null, null));
                     using var uow = new UnitOfWork(dataLayer);
-                    var persistentTrial = await uow.GetObjectByKeyAsync<License>(trial.Id);
+                    var persistentTrial = await uow.GetObjectByKeyAsync<GrantedLicense>(trial.Id);
                     persistentTrial.ExpiresAt = DateTime.Now.AddDays(-1);
                     await uow.SaveAsync(persistentTrial);
                     await uow.CommitChangesAsync();

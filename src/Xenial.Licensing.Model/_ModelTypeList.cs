@@ -19,7 +19,7 @@ namespace Xenial.Licensing.Model
 
                 typeof(Company),
                 typeof(CompanyUser),
-                typeof(License),
+                typeof(GrantedLicense),
                 typeof(LicensingKey),
 
                 typeof(Product),

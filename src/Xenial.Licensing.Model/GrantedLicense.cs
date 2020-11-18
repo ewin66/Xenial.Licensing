@@ -12,9 +12,9 @@ using Xenial.Licensing.Model.Infrastructure;
 namespace Xenial.Licensing.Model
 {
 
-    [Persistent("License")]
+    [Persistent("GrantedLicense")]
     [DefaultClassOptions]
-    public class License : XenialLicenseBaseObject
+    public class GrantedLicense : XenialLicenseBaseObject
     {
         private LicenseType type;
         private DateTime? expiresAt;
@@ -28,10 +28,18 @@ namespace Xenial.Licensing.Model
         private ProductVersion? productVersion;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="License"/> class.
+        /// Initializes a new instance of the <see cref="GrantedLicense"/> class.
         /// </summary>
         /// <param name="session">The session.</param>
-        public License(Session session) : base(session) { }
+        public GrantedLicense(Session session) : base(session)
+            => session.PreFetch(Products);
+
+        protected override void OnLoaded()
+        {
+            base.OnLoaded();
+            //Cross thread operation
+            var _ = Products.Count;
+        }
 
         public override void AfterConstruction()
         {
@@ -87,16 +95,14 @@ namespace Xenial.Licensing.Model
                 {
                     c.Add(nameof(Company.CompanyGlobalId), User.Company?.CompanyGlobalId?.ToString());
                 }
+
                 if (ProductBundle != null)
                 {
                     c.Add("ProductBundle", ProductBundle.Name);
                 }
             });
 
-            if (ProductBundle != null)
-            {
-                builder.WithProductFeatures(ProductBundle.Products.ToDictionary(i => i.Product.Name, _ => ProductVersion?.Version));
-            }
+            builder.WithProductFeatures(Products.ToDictionary(i => i.Product, _ => ProductVersion?.Version));
 
             if (Key != null)
             {
@@ -139,19 +145,56 @@ namespace Xenial.Licensing.Model
         public CompanyUser? User { get => user; set => SetPropertyValue(ref user, value); }
 
         [Persistent("ProductBundleId")]
-        public ProductBundle? ProductBundle { get => productBundle; set => SetPropertyValue(ref productBundle, value); }
+        public ProductBundle? ProductBundle
+        {
+            get => productBundle;
+            set => SetPropertyValue(ref productBundle, value, product =>
+            {
+                foreach (var licenseProduct in Products.ToList())
+                {
+                    Products.Remove(licenseProduct);
+                }
+
+                if (product != null)
+                {
+                    foreach (var productBundle in product.Products)
+                    {
+                        Products.Add(new GrantedLicenseProduct(Session)
+                        {
+                            Product = productBundle.Product.Name
+                        });
+                    }
+                }
+            });
+        }
 
         [Persistent("ProductVersionId")]
         public ProductVersion? ProductVersion { get => productVersion; set => SetPropertyValue(ref productVersion, value); }
+
+        [Association(nameof(GrantedLicenseProduct.License) + "-" + nameof(Products))]
+        [Aggregated]
+        public XPCollection<GrantedLicenseProduct> Products => GetCollection<GrantedLicenseProduct>();
     }
 
-    [Persistent("LicenseProduct")]
-    public class LicenseProduct : XenialLicenseBaseObjectId
+#nullable disable
+
+    [Persistent("GrantedLicenseProduct")]
+    public class GrantedLicenseProduct : XenialLicenseBaseObjectId
     {
+        private GrantedLicense license;
+        private string name;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="LicenseProduct"/> class.
+        /// Initializes a new instance of the <see cref="GrantedLicenseProduct"/> class.
         /// </summary>
         /// <param name="session">The session.</param>
-        public LicenseProduct(Session session) : base(session) { }
+        public GrantedLicenseProduct(Session session) : base(session) { }
+
+        [Persistent("LicenseId")]
+        [Association(nameof(License) + "-" + nameof(GrantedLicense.Products))]
+        public GrantedLicense License { get => license; set => SetPropertyValue(ref license, value); }
+
+        [Persistent("Product")]
+        public string Product { get => name; set => SetPropertyValue(ref name, value); }
     }
 }

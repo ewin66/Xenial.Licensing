@@ -93,7 +93,7 @@ namespace Xenial.Licensing.Domain.Commands
                 };
             }
 
-            var license = new License(unitOfWork)
+            var license = new GrantedLicense(unitOfWork)
             {
                 User = user,
             };
@@ -112,11 +112,11 @@ namespace Xenial.Licensing.Domain.Commands
 
         private async Task<TrialRequestResult> FetchExistingTrial(TrialRequestCommand command)
         {
-            var licenses = await unitOfWork.Query<License>()
+            var licenses = await unitOfWork.Query<GrantedLicense>()
                .Where(l =>
                    l.User != null
                    && l.User.Id == command.UserId
-                   && l.Type == License.LicenseType.Trial
+                   && l.Type == GrantedLicense.LicenseType.Trial
                    && (l.ExpiresAt.HasValue || l.ExpiresNever)
                )
                .ToListAsync();
