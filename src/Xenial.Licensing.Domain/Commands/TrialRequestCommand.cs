@@ -34,14 +34,88 @@ namespace Xenial.Licensing.Domain.Commands
                 command = command with { DefaultTrialPeriod = settings.DefaultTrialPeriod };
             }
 
-            var licenses = await unitOfWork.Query<License>()
-                .Where(l =>
-                    l.User != null
-                    && l.User.Id == command.UserId
-                    && l.Type == License.LicenseType.Trial
-                    && (l.ExpiresAt.HasValue || l.ExpiresNever)
-                )
+            var trialRequest = await unitOfWork.Query<TrialRequest>()
+                   .Where(trial => trial.UserId == command.UserId)
+                   .OrderByDescending(trial => trial.RequestDate)
+                   .FirstOrDefaultAsync();
+
+            if (trialRequest != null)
+            {
+                if ((trialRequest.RequestDate - DateTime.UtcNow.Date).TotalDays < settings.DefaultTrialCooldown)
+                {
+                    //Last trial request is older than 1 year / DefaultTrialCooldown
+                }
+
+                var existingTrialResult = await FetchExistingTrial(command);
+                if (existingTrialResult != null)
+                {
+                    return existingTrialResult;
+                }
+            }
+
+            var trialRequests = await unitOfWork.Query<TrialRequest>()
+                .Where(trial => trial.MachineKey == command.MachineKey)
+                .OrderByDescending(trial => trial.RequestDate)
+                .Take(2)
                 .ToListAsync();
+
+            if (trialRequests.Count >= 2) //We allow a second trial with a different email
+            {
+                //We have a third trial request on the same machine with a different email
+                throw new InvalidOperationException("You cannot request a new trial, please contact support");
+            }
+
+            var newLicense = await RequestTrial(command);
+            if (newLicense == null)
+            {
+                throw new ArgumentNullException(nameof(newLicense));
+            }
+            return newLicense;
+        }
+
+        private async Task<TrialRequestResult> RequestTrial(TrialRequestCommand command)
+        {
+            var trialRequest = new TrialRequest(unitOfWork)
+            {
+                MachineKey = command.MachineKey,
+                UserId = command.UserId
+            };
+            var user = await unitOfWork.GetObjectByKeyAsync<CompanyUser>(command.UserId);
+            if (user == null)
+            {
+                user = new CompanyUser(unitOfWork)
+                {
+                    Id = command.UserId
+                };
+            }
+
+            var license = new License(unitOfWork)
+            {
+                User = user,
+            };
+
+            await unitOfWork.SaveAsync(trialRequest);
+            await unitOfWork.SaveAsync(license);
+            await unitOfWork.CommitChangesAsync();
+
+            if (!license.ExpiresAt.HasValue)
+            {
+                throw new ArgumentException($"License must have {nameof(license.ExpiresAt)} set for a trial request.");
+            }
+
+            return new TrialRequestResult(license.Id, license.GeneratedLicense.ToString(), license.ExpiresAt.Value);
+        }
+
+        private async Task<TrialRequestResult> FetchExistingTrial(TrialRequestCommand command)
+        {
+            var licenses = await unitOfWork.Query<License>()
+               .Where(l =>
+                   l.User != null
+                   && l.User.Id == command.UserId
+                   && l.Type == License.LicenseType.Trial
+                   && (l.ExpiresAt.HasValue || l.ExpiresNever)
+               )
+               .ToListAsync();
 
             if (licenses.Any(l => l.ExpiresNever))
             {
@@ -57,72 +131,11 @@ namespace Xenial.Licensing.Domain.Commands
 
                 if (expireTrial != null)
                 {
-                    return new TrialRequestResult(expireTrial.Id, expireTrial.GeneratedLicense.ToString(), expireTrial.ExpiresAt.Value);
+                    return new TrialRequestResult(expireTrial.Id, expireTrial.GeneratedLicense.ToString(), expireTrial.ExpiresAt.Value.ToUniversalTime());
                 }
             }
 
-            var trialRequest = await unitOfWork.Query<TrialRequest>()
-                   .Where(trial => trial.UserId == command.UserId)
-                   .OrderByDescending(trial => trial.RequestDate)
-                   .FirstOrDefaultAsync();
-
-            if (trialRequest != null)
-            {
-                if ((trialRequest.RequestDate - DateTime.UtcNow.Date).TotalDays < settings.DefaultTrialCooldown)
-                {
-                    //Last trial request is older than 1 year / DefaultTrialCooldown
-                }
-
-                //Need to lockout from new trial
-            }
-
-            var trialRequests = await unitOfWork.Query<TrialRequest>()
-                .Where(trial => trial.MachineKey == command.MachineKey)
-                .OrderByDescending(trial => trial.RequestDate)
-                .Take(2)
-                .ToListAsync();
-
-            if (trialRequests.Count <= 2) //We allow a second trial with a different email
-            {
-
-            }
-            else //We have a second trial request on the same machine with a different email
-            {
-
-            }
-
-            trialRequest = new TrialRequest(unitOfWork)
-            {
-                MachineKey = command.MachineKey,
-                UserId = command.UserId
-            };
-
-            await unitOfWork.SaveAsync(trialRequest);
-            await unitOfWork.CommitChangesAsync();
-
-            var user = await unitOfWork.GetObjectByKeyAsync<CompanyUser>(command.UserId);
-            if (user == null)
-            {
-                user = new CompanyUser(unitOfWork)
-                {
-                    Id = command.UserId
-                };
-            }
-
-            var license = new License(unitOfWork)
-            {
-                User = user,
-            };
-
-            await unitOfWork.SaveAsync(license);
-            await unitOfWork.CommitChangesAsync();
-
-            if (!license.ExpiresAt.HasValue)
-            {
-                throw new ArgumentException($"License must have {nameof(license.ExpiresAt)} set for a trial request.");
-            }
-
-            return new TrialRequestResult(license.Id, license.GeneratedLicense.ToString(), license.ExpiresAt.Value);
+            return null;
         }
     }
 }

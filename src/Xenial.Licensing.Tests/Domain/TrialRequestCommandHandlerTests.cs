@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DevExpress.Xpo;
+using DevExpress.XtraRichEdit.Fields;
 
 using Shouldly;
 
@@ -39,13 +40,13 @@ namespace Xenial.Licensing.Tests.Domain
             {
                 It("With normal user", async () =>
                 {
-                    var trial = await ExecuteCommand(new TrialRequestCommand("ExistingUser", "Machine1", null, null));
+                    var trial = await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), null, null));
 
                     trial.ShouldSatisfyAllConditions(
                         () => trial.ShouldNotBeNull(),
                         () => trial.Id.ShouldNotBe(default),
                         () => trial.ExpiresAt.ShouldNotBeNull(),
-                        () => trial.ExpiresAt.Value.Date.Date.ShouldBe(DateTime.Today.AddDays(30)),
+                        () => trial.ExpiresAt.Value.Date.Date.ShouldBe(DateTime.Today.AddDays(settings.DefaultTrialPeriod)),
                         () => trial.License.ShouldNotBeNull(),
                         () => Standard.Licensing.License.Load(trial.License)
                                 .Validate()
@@ -59,11 +60,86 @@ namespace Xenial.Licensing.Tests.Domain
 
                 It("With existing valid trial license gets the same", async () =>
                 {
-                    var trial1 = await ExecuteCommand(new TrialRequestCommand("ExistingUser", "Machine1", null, null));
-                    var trial2 = await ExecuteCommand(new TrialRequestCommand("ExistingUser", "Machine1", null, null));
+                    var machine = Guid.NewGuid().ToString();
+                    var user = Guid.NewGuid().ToString();
+                    var trial1 = await ExecuteCommand(new TrialRequestCommand(user, machine, null, null));
+                    var trial2 = await ExecuteCommand(new TrialRequestCommand(user, machine, null, null));
 
                     trial1.ShouldBeEquivalentTo(trial2);
                 });
+
+                It("With existing old trial license gets a new one", async () =>
+                {
+                    using var uow = new UnitOfWork(dataLayer);
+                    await uow.SaveAsync(new TrialRequest(uow)
+                    {
+                        MachineKey = "Machine1",
+                        UserId = "ExistingUser",
+                        RequestDate = DateTime.Today.AddDays((settings.DefaultTrialCooldown * -1) + 1)
+                    });
+
+                    await uow.CommitChangesAsync();
+
+                    var trial = await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), null, null));
+
+                    trial.ShouldSatisfyAllConditions(
+                        () => trial.ShouldNotBeNull(),
+                        () => trial.Id.ShouldNotBe(default),
+                        () => trial.ExpiresAt.ShouldNotBeNull(),
+                        () => trial.ExpiresAt.Value.Date.Date.ShouldBe(DateTime.Today.AddDays(settings.DefaultTrialPeriod)),
+                        () => trial.License.ShouldNotBeNull(),
+                        () => Standard.Licensing.License.Load(trial.License)
+                                .Validate()
+                                .ExpirationDate()
+                                .And()
+                                .Signature(settings.DefaultLicensingKey.PublicKey)
+                                .AssertValidLicense()
+                                .ToList().Any().ShouldBe(false, "License is not valid")
+                    );
+                });
+
+                It("old trial license is invalid", async () =>
+                {
+                    var trial = await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), null, null));
+                    using var uow = new UnitOfWork(dataLayer);
+                    var persistentTrial = await uow.GetObjectByKeyAsync<License>(trial.Id);
+                    persistentTrial.ExpiresAt = DateTime.Now.AddDays(-1);
+                    await uow.SaveAsync(persistentTrial);
+                    await uow.CommitChangesAsync();
+
+                    persistentTrial.ShouldSatisfyAllConditions(
+                        () => persistentTrial.GeneratedLicense.ShouldNotBeNull(),
+                        () => persistentTrial.GeneratedLicense
+                                .Validate()
+                                .ExpirationDate()
+                                .And()
+                                .Signature(settings.DefaultLicensingKey.PublicKey)
+                                .AssertValidLicense()
+                                .ToList().Any().ShouldBe(true, "License is valid")
+                    );
+                });
+
+                It("second trial with same machine key should be valid (user 'extends' trial with new email)", async () =>
+                {
+                    var machine = Guid.NewGuid().ToString();
+                    var trial1 = await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), machine, null, null));
+                    var trial2 = await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), machine, null, null));
+
+                    (trial1 == trial2).ShouldBeFalse("Second request should be fine");
+                });
+
+                It("third trial with same machine key should be null", async () =>
+                {
+                    var machine = Guid.NewGuid().ToString();
+                    var trial1 = await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), machine, null, null));
+                    var trial2 = await ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), machine, null, null));
+
+                    await Should.ThrowAsync<InvalidOperationException>(
+                        () => ExecuteCommand(new TrialRequestCommand(Guid.NewGuid().ToString(), machine, null, null))
+                    );
+                });
+
+
             });
         });
 
