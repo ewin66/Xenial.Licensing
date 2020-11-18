@@ -12,7 +12,7 @@ using Xenial.Licensing.Model.Infrastructure;
 namespace Xenial.Licensing.Domain.Commands
 {
     public record TrialRequestCommand(string UserId, string MachineKey, int? DefaultTrialCooldown, int? DefaultTrialPeriod);
-    public record TrialRequestResult(Guid Id, string License, string PublicKey, DateTime ExpiresAt);
+    public record TrialRequestResult(Guid Id, string License, string PublicKey, string PublicKeyName, DateTime ExpiresAt);
 
     public class TrialRequestCommandHandler
     {
@@ -111,6 +111,7 @@ namespace Xenial.Licensing.Domain.Commands
                 license.Id,
                 license.GeneratedLicense.ToString(),
                 license.Key.PublicKey,
+                license.Key.Name,
                 license.ExpiresAt.Value
             );
         }
@@ -133,6 +134,7 @@ namespace Xenial.Licensing.Domain.Commands
                     neverExpireTrial.Id,
                     neverExpireTrial.GeneratedLicense.ToString(),
                     neverExpireTrial.Key.PublicKey,
+                    neverExpireTrial.Key.Name,
                     DateTime.MaxValue
                 );
             }
@@ -150,6 +152,7 @@ namespace Xenial.Licensing.Domain.Commands
                         expireTrial.Id,
                         expireTrial.GeneratedLicense.ToString(),
                         expireTrial.Key.PublicKey,
+                        expireTrial.Key.Name,
                         expireTrial.ExpiresAt.Value.ToUniversalTime()
                     );
                 }

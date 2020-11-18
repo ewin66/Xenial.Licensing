@@ -12,7 +12,7 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
         public LicenseFileStorage(IUserProfileProvider userProfileProvider)
             => this.userProfileProvider = userProfileProvider;
 
-        public async Task<string> GetLicenseAsync()
+        public async Task<string> FetchAsync()
         {
             var licenseFile = await GetLicenseFile();
             if (File.Exists(licenseFile))
@@ -24,7 +24,7 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
 
         private async Task<string> GetLicenseFile() => Path.Combine(await userProfileProvider.GetUserProfileDirectoryAsync(), "License.xml");
 
-        public async Task StoreLicenseAsync(string license)
+        public async Task StoreAsync(string license)
         {
             var licenseFile = await GetLicenseFile();
             await File.WriteAllTextAsync(licenseFile, license);

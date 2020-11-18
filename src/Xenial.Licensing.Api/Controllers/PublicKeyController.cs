@@ -21,11 +21,11 @@ namespace Xenial.Licensing.Api.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class KeyController : ControllerBase
+    public class PublicKeyController : ControllerBase
     {
         private readonly UnitOfWork unitOfWork;
 
-        public KeyController(UnitOfWork unitOfWork)
+        public PublicKeyController(UnitOfWork unitOfWork)
             => this.unitOfWork = unitOfWork;
 
         /// <summary>
@@ -35,8 +35,8 @@ namespace Xenial.Licensing.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(string), 404)]
         [ProducesResponseType(typeof(SerializableError), 400)]
-        [ProducesResponseType(typeof(OutKeyModel[]), 200)]
-        [Route("public/{id}")]
+        [ProducesResponseType(typeof(OutKeyModel), 200)]
+        [Route("{id}")]
         public async Task<IActionResult> Get(string id)
         {
             var key = await unitOfWork.GetObjectByKeyAsync<LicensingKey>(id);
@@ -44,7 +44,8 @@ namespace Xenial.Licensing.Api.Controllers
             {
                 return Ok(new OutKeyModel
                 {
-                    PublicKey = key.PublicKey
+                    PublicKey = key.PublicKey,
+                    Name = key.Name
                 });
             }
             return NotFound(id);
@@ -57,8 +58,8 @@ namespace Xenial.Licensing.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(string), 404)]
         [ProducesResponseType(typeof(SerializableError), 400)]
-        [ProducesResponseType(typeof(OutKeyModel[]), 200)]
-        [Route("public/name/{name}")]
+        [ProducesResponseType(typeof(OutKeyModel), 200)]
+        [Route("name/{name}")]
         public async Task<IActionResult> GetKeyByName(string name)
         {
             var key = await unitOfWork.Query<LicensingKey>().FirstOrDefaultAsync(k => k.Name == name);
@@ -66,7 +67,8 @@ namespace Xenial.Licensing.Api.Controllers
             {
                 return Ok(new OutKeyModel
                 {
-                    PublicKey = key.PublicKey
+                    PublicKey = key.PublicKey,
+                    Name = key.Name
                 });
             }
             return NotFound(name);
@@ -76,5 +78,6 @@ namespace Xenial.Licensing.Api.Controllers
     public class OutKeyModel
     {
         public string PublicKey { get; set; }
+        public string Name { get; set; }
     }
 }

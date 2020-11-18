@@ -39,6 +39,8 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
             services.AddTransient<IUserProfileProvider, DefaultUserProfileProvider>();
             services.AddTransient<IDeviceIdProvider, DefaultDeviceIdProvider>();
             services.AddTransient<IUserInfoProvider, DefaultUserInfoProvider>();
+            services.AddTransient<ILicenseValidator, DefaultLicenseValidator>();
+            services.AddTransient<ILicensePublicKeyStorage, AggregateLicensePublicKeyStorage>();
             services.AddTransient<ILicenseStorage, AggregateLicenseStorage>();
 
             services.AddHttpClient<DefaultTokenProvider>();

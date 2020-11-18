@@ -19,13 +19,15 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
         private readonly IDeviceIdProvider deviceIdProvider;
         private readonly IUserInfoProvider userInfoProvider;
         private readonly ILicenseStorage licenseStorage;
+        private readonly ILicensePublicKeyStorage publicKeyStorage;
 
         public DefaultWelcomeCommand(
             ILicenseQuery licenseQuery,
             ILicenseClient licenseClient,
             IDeviceIdProvider deviceIdProvider,
             IUserInfoProvider userInfoProvider,
-            ILicenseStorage licenseStorage
+            ILicenseStorage licenseStorage,
+            ILicensePublicKeyStorage publicKeyStorage
         )
         {
             this.licenseQuery = licenseQuery;
@@ -33,6 +35,7 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
             this.deviceIdProvider = deviceIdProvider;
             this.userInfoProvider = userInfoProvider;
             this.licenseStorage = licenseStorage;
+            this.publicKeyStorage = publicKeyStorage;
         }
 
         public async Task<int> Execute()
@@ -52,7 +55,7 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
 
             WriteLine("Fetching active licenses...");
 
-            var storedLicense = await licenseStorage.GetLicenseAsync();
+            var storedLicense = await licenseStorage.FetchAsync();
 
             WriteLine($"Has stored license...? {!string.IsNullOrEmpty(storedLicense)}");
 
@@ -70,7 +73,8 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
                         var machineKey = await deviceIdProvider.GetDeviceIdAsync();
                         var trialResult = await licenseClient.LicensesRequestTrialAsync(new InRequestTrialModel(machineKey));
                         WriteLine(FormatXml(trialResult.License));
-                        await licenseStorage.StoreLicenseAsync(trialResult.License);
+                        await licenseStorage.StoreAsync(trialResult.License);
+                        await publicKeyStorage.StoreAsync(trialResult.PublicKeyName, trialResult.PublicKey);
                     }
                     catch (LicenseApiException<IDictionary<string, object>> ex) when (ex.StatusCode == 400)
                     {

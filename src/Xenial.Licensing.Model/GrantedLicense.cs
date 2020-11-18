@@ -86,8 +86,8 @@ namespace Xenial.Licensing.Model
                 c.Add("CreatedAt", DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'"));
                 if (Key != null)
                 {
-                    c.Add("KeyId", Key.Id.ToString());
-                    c.Add("KeyName", Key.Name);
+                    c.Add("PublicKeyId", Key.Id.ToString());
+                    c.Add("PublicKeyName", Key.Name);
                 }
 
                 if (User != null)

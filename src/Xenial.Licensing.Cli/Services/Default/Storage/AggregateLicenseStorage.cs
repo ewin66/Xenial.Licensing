@@ -14,11 +14,11 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
                 new LicenseFileStorage(userProfileProvider)
             };
 
-        public async Task<string> GetLicenseAsync()
+        public async Task<string> FetchAsync()
         {
             foreach (var storage in storages)
             {
-                var license = await storage.GetLicenseAsync();
+                var license = await storage.FetchAsync();
                 if (!string.IsNullOrEmpty(license))
                 {
                     return license;
@@ -28,11 +28,11 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
             return null;
         }
 
-        public async Task StoreLicenseAsync(string license)
+        public async Task StoreAsync(string license)
         {
             foreach (var storage in storages)
             {
-                await storage.StoreLicenseAsync(license);
+                await storage.StoreAsync(license);
             }
         }
     }

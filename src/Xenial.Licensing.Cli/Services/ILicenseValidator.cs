@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Xenial.Licensing.Cli.Services
 {
-    public interface ILicenseStorage
+    public interface ILicenseValidator
     {
-        Task<string> FetchAsync();
-        Task StoreAsync(string license);
+        public Task<bool> IsValid();
     }
 }
