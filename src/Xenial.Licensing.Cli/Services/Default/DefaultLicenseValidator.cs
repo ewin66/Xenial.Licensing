@@ -22,7 +22,7 @@ namespace Xenial.Licensing.Cli.Services.Default
         public async Task<bool> IsValid()
         {
             var licString = await licenseStorage.FetchAsync();
-            if (string.IsNullOrEmpty(licString))
+            if (!string.IsNullOrEmpty(licString))
             {
                 var lic = Standard.Licensing.License.Load(licString);
                 var publicKey = await publicKeyStorage.FetchAsync(lic.AdditionalAttributes.Get("PublicKeyName"));

@@ -20,6 +20,8 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
         private readonly IUserInfoProvider userInfoProvider;
         private readonly ILicenseStorage licenseStorage;
         private readonly ILicensePublicKeyStorage publicKeyStorage;
+        private readonly ILicenseValidator licenseValidator;
+        private readonly ILicenseInformationProvider licenseInformationProvider;
 
         public DefaultWelcomeCommand(
             ILicenseQuery licenseQuery,
@@ -27,7 +29,9 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
             IDeviceIdProvider deviceIdProvider,
             IUserInfoProvider userInfoProvider,
             ILicenseStorage licenseStorage,
-            ILicensePublicKeyStorage publicKeyStorage
+            ILicensePublicKeyStorage publicKeyStorage,
+            ILicenseValidator licenseValidator,
+            ILicenseInformationProvider licenseInformationProvider
         )
         {
             this.licenseQuery = licenseQuery;
@@ -36,6 +40,8 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
             this.userInfoProvider = userInfoProvider;
             this.licenseStorage = licenseStorage;
             this.publicKeyStorage = publicKeyStorage;
+            this.licenseValidator = licenseValidator;
+            this.licenseInformationProvider = licenseInformationProvider;
         }
 
         public async Task<int> Execute()
@@ -89,6 +95,11 @@ namespace Xenial.Licensing.Cli.Services.Commands.Default
                         WriteLine($"ERROR {ex}");
                     }
                 }
+            }
+
+            if (await licenseValidator.IsValid())
+            {
+                WriteLine($"License is valid until {await licenseInformationProvider.IsValidUntil()}");
             }
 
             return 0;
