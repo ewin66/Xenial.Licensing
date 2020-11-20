@@ -1,22 +1,28 @@
 ﻿using System;
 using System.CommandLine;
+using System.CommandLine.Binding;
 using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
+using Xenial.Licensing.Cli.Services.Default;
+
 namespace Xenial.Licensing.Cli.Commands
 {
     public class XenialRootCommand : ICommandHandler
     {
+        public XenialDefaultCommand Command { get; }
         public RootCommand RootCommand { get; }
 
         public XenialRootCommand(IServiceProvider serviceProvider)
         {
+            Command = new XenialDefaultCommand();
             RootCommand = new RootCommand();
 
-            foreach (var option in new XenialDefaultCommand().CreateOptions())
+            foreach (var option in Command.CreateOptions())
             {
                 RootCommand.AddOption(option);
             }
@@ -71,8 +77,18 @@ namespace Xenial.Licensing.Cli.Commands
 
         public Task<int> InvokeAsync(InvocationContext context)
         {
-            //TODO: invoke hello command if wizard was never ran
+            var bindingContext = context.BindingContext;
 
+            var binder = new ModelBinder(Command.GetType());
+            binder.UpdateInstance(Command, bindingContext);
+
+            if (!Command.NoLogo)
+            {
+                context.Console.Out.WriteLine(Consts.Header);
+                context.Console.Out.WriteLine();
+            }
+
+            //TODO: invoke hello command if wizard was never ran
             new HelpResult().Apply(context);
 
             return Task.FromResult(-1);

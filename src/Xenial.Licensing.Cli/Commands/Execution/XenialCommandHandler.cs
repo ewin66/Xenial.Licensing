@@ -1,9 +1,12 @@
 ﻿using System;
 using System.CommandLine.Binding;
 using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
+
+using Xenial.Licensing.Cli.Services.Default;
 
 namespace Xenial.Licensing.Cli.Commands
 {
@@ -33,6 +36,15 @@ namespace Xenial.Licensing.Cli.Commands
 
             var binder = new ModelBinder(command.GetType());
             binder.UpdateInstance(command, bindingContext);
+
+            if (command is XenialDefaultCommand defaultCommand)
+            {
+                if (!defaultCommand.NoLogo)
+                {
+                    context.Console.Out.WriteLine(Consts.Header);
+                    context.Console.Out.WriteLine();
+                }
+            }
 
             var commandHandler = (IXenialCommandHandler)serviceProvider.GetRequiredService(commandHandlerType);
             var result = await commandHandler.ExecuteCommand(command);
