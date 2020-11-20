@@ -12,7 +12,7 @@ namespace Xenial.Licensing.Cli.Commands
         public IEnumerable<Option> CreateOptions() => Enumerable.Empty<Option>();
     }
 
-    [XenialCommandHandler(typeof(LoginCommand), "login")]
+    [XenialCommandHandler("login")]
     public class LoginCommandHandler : XenialCommandHandler<LoginCommand>
     {
         protected override Task<int> ExecuteCommand(LoginCommand arguments)

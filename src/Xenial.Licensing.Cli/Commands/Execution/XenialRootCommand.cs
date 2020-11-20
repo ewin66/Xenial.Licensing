@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -19,36 +20,48 @@ namespace Xenial.Licensing.Cli.Commands
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(type => !type.IsAbstract && typeof(IXenialCommandHandler).IsAssignableFrom(type));
 
-            foreach (var commandHandlerType in commandHandlerTypes.Select(type => new
+            foreach (var commandHandlerType in commandHandlerTypes.Select(type =>
             {
-                Type = type,
-                Attribute = type.GetCustomAttribute<XenialCommandHandlerAttribute>()
-            }).Where(item => item.Attribute != null))
+                var attribute = type.GetCustomAttribute<XenialCommandHandlerAttribute>();
+                return (type, attribute);
+            }).Where(t => t.attribute != null))
             {
-                if (!typeof(IXenialCommand).IsAssignableFrom(commandHandlerType.Attribute.CommandType))
+                var commandType = FindCommandType(commandHandlerType);
+
+                var subCommand = new Command(commandHandlerType.attribute.CommandName, commandHandlerType.attribute.Description);
+                if (!string.IsNullOrEmpty(commandHandlerType.attribute.ShortCut))
                 {
-                    throw new ArgumentException();
+                    subCommand.AddAlias(commandHandlerType.attribute.ShortCut);
                 }
 
-                var subCommand = new Command(commandHandlerType.Attribute.CommandName, commandHandlerType.Attribute.Description);
-                if (!string.IsNullOrEmpty(commandHandlerType.Attribute.ShortCut))
-                {
-                    subCommand.AddAlias(commandHandlerType.Attribute.ShortCut);
-                }
-
-                var command = (IXenialCommand)Activator.CreateInstance(commandHandlerType.Attribute.CommandType);
+                var command = (IXenialCommand)Activator.CreateInstance(commandType);
 
                 foreach (var option in command.CreateOptions())
                 {
                     subCommand.AddOption(option);
                 }
 
-                subCommand.Handler = new XenialCommandHandler(serviceProvider, command, commandHandlerType.Type);
+                subCommand.Handler = new XenialCommandHandler(serviceProvider, command, commandHandlerType.type);
 
                 RootCommand.Add(subCommand);
             }
 
             RootCommand.Handler = this;
+
+            static Type FindCommandType((Type type, XenialCommandHandlerAttribute attribute) commandHandlerType)
+            {
+                if (commandHandlerType.type.BaseType.GenericTypeArguments.Length > 0)
+                {
+                    return commandHandlerType.type.BaseType.GenericTypeArguments.First();
+                }
+
+                if (!typeof(IXenialCommand).IsAssignableFrom(commandHandlerType.attribute.CommandType))
+                {
+                    throw new ArgumentException();
+                }
+
+                return commandHandlerType.attribute.CommandType;
+            }
         }
 
         public Task<int> InvokeAsync(InvocationContext context)
