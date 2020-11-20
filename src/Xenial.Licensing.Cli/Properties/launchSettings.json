@@ -3,7 +3,7 @@
   "profiles": {
     "Xenial.Licensing.Api": {
       "commandName": "Project",
-      "commandLineArgs": "login",
+      "commandLineArgs": "",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       },

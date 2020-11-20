@@ -16,6 +16,11 @@ namespace Xenial.Licensing.Cli.Commands
         {
             RootCommand = new RootCommand();
 
+            foreach (var option in new XenialDefaultCommand().CreateOptions())
+            {
+                RootCommand.AddOption(option);
+            }
+
             var commandHandlerTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
                 .Where(type => !type.IsAbstract && typeof(IXenialCommandHandler).IsAssignableFrom(type));
