@@ -3,10 +3,11 @@
   "profiles": {
     "Xenial.Licensing.Api": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
+      "commandLineArgs": "",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": "true"
     }
   }
 }

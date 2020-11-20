@@ -17,7 +17,7 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
         public async Task<string> FetchAsync(string keyName)
         {
             var keys = await GetKeys();
-            
+
             return keys.FirstOrDefault(r => r.Key == keyName).Value;
         }
 

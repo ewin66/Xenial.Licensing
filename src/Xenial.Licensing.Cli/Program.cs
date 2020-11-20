@@ -1,10 +1,12 @@
 ﻿using System;
+using System.CommandLine;
 using System.Net.Http;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Xenial.Licensing.Cli;
+using Xenial.Licensing.Cli.Commands;
 using Xenial.Licensing.Cli.Services;
 using Xenial.Licensing.Cli.Services.Commands.Default;
 using Xenial.Licensing.Cli.Services.Default;
@@ -21,8 +23,8 @@ var services = serviceScope.ServiceProvider;
 
 try
 {
-    var myService = services.GetRequiredService<XenialLicensingApplication>();
-    return await myService.RunAsync(args);
+    var rootCommand = services.GetRequiredService<XenialRootCommand>();
+    return await rootCommand.RootCommand.InvokeAsync(args);
 }
 catch (Exception ex)
 {
@@ -61,4 +63,6 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
             services.AddTransient<DefaultWelcomeCommand>();
 
             services.AddSingleton<XenialLicensingApplication>();
+            services.AddSingleton<XenialRootCommand>();
+            services.AddSingleton<LoginCommandHandler>();
         });
