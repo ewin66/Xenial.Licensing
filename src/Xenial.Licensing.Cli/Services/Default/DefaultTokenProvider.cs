@@ -23,7 +23,12 @@ namespace Xenial.Licensing.Cli.Services.Default
         private readonly IUserProfileProvider userProfileProvider;
         private readonly ILogger<DefaultTokenProvider> logger;
 
-        public DefaultTokenProvider(IConfiguration configuration, HttpClient httpClient, IUserProfileProvider userProfileProvider, ILogger<DefaultTokenProvider> logger)
+        public DefaultTokenProvider(
+            IConfiguration configuration,
+            HttpClient httpClient,
+            IUserProfileProvider userProfileProvider,
+            ILogger<DefaultTokenProvider> logger
+        )
         {
             this.configuration = configuration;
             this.httpClient = httpClient;

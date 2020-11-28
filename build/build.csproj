@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="bullseye" Version="3.5.0" />
     <PackageReference Include="simpleexec" Version="6.3.0" />
+    <PackageReference Include="Xenial.Beer" Version="0.0.5" />
   </ItemGroup>
 
 </Project>

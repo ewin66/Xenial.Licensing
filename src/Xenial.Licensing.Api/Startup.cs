@@ -71,8 +71,8 @@ namespace Xenial.Licensing.Api
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{Configuration.GetSection("Authentication:Xenial").GetValue<string>("ClientId")} v1");
                     c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List);
 
-                    c.OAuthClientId($"{Configuration.GetSection("Authentication:Xenial").GetValue<string>("ClientId")}.Swagger");
-                    c.OAuthAppName($"{Configuration.GetSection("Authentication:Xenial").GetValue<string>("ClientId")}.Swagger");
+                    c.OAuthClientId(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientId"));
+                    c.OAuthAppName(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientId"));
                     c.OAuthClientSecret(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientSecret"));
                     c.OAuthUsePkce();
                 });

@@ -35,6 +35,7 @@
     <PackageReference Include="DevExpress.Persistent.Base" Version="20.2.3" />
     <PackageReference Include="DevExpress.Persistent.BaseImpl" Version="20.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.0" />
+    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xenial.Licensing.Module.Blazor\Xenial.Licensing.Module.Blazor.csproj">
