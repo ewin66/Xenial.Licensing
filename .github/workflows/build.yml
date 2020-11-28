@@ -28,7 +28,7 @@ jobs:
         with:
           dotnet-version: 5.0.x
       - name: Build
-        run: dotnet run --project build/build.csproj build
+        run: dotnet run --project build/build.csproj -- build
         env:
           DEVEXPRESS_NUGET_FEED: ${{secrets.DEVEXPRESS_NUGET_FEED}}
       - uses: actions/upload-artifact@v2
@@ -43,13 +43,16 @@ jobs:
       - name: Fetch all history for all tags and branches
         run: |
           git fetch --prune --unshallow
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.2
       - name: Setup .NET Core 5.0.x
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.x
       - name: Build
-        run: dotnet run --project build/build.csproj -- publish:api publish:admin
+        run: dotnet run --project build/build.csproj -- restore publish:api publish:admin
         env:
+          DEVEXPRESS_NUGET_FEED: ${{secrets.DEVEXPRESS_NUGET_FEED}}
           ADMIN_AUTHENTICATION_XENIAL_CLIENTSECRET: ${{secrets.ADMIN_AUTHENTICATION_XENIAL_CLIENTSECRET}}
           API_AUTHENTICATION_XENIAL_APISECRET: ${{secrets.API_AUTHENTICATION_XENIAL_APISECRET}}
           API_AUTHENTICATION_XENIAL_SWAGGER_CLIENTSECRET: ${{secrets.API_AUTHENTICATION_XENIAL_SWAGGER_CLIENTSECRET}}
