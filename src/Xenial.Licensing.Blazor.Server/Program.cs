@@ -40,11 +40,11 @@ namespace Xenial.Licensing.Blazor.Server
                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
                .CreateLogger();
 
-            SQLiteConnectionProvider.Register();
-            MySqlConnectionProvider.Register();
             try
             {
                 Log.Information("Starting host...");
+                SQLiteConnectionProvider.Register();
+                MySqlConnectionProvider.Register();
 
                 if (ContainsArgument(args, "help") || ContainsArgument(args, "h"))
                 {
@@ -72,6 +72,7 @@ namespace Xenial.Licensing.Blazor.Server
                     }
                     else
                     {
+                        Log.Information("Host run...");
                         host.Run();
                     }
                 }
