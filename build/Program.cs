@@ -31,6 +31,10 @@ BuildAndDeployIISProject(new IISDeployOptions("Xenial.Licensing.Blazor.Server", 
 
         serverSettings = serverSettings
             .AddOrUpdateJsonValue(
+                "ConnectionStrings:DefaultConnection",
+                Environment.GetEnvironmentVariable("XENIAL_DEFAULTCONNECTIONSTRING") ?? PleaseSet
+            )
+            .AddOrUpdateJsonValue(
                 "Authentication:Xenial:ClientSecret",
                 Environment.GetEnvironmentVariable("ADMIN_AUTHENTICATION_XENIAL_CLIENTSECRET") ?? PleaseSet
             )
@@ -49,6 +53,10 @@ BuildAndDeployIISProject(new IISDeployOptions("Xenial.Licensing.Api", "api.licen
         var serverSettings = await File.ReadAllTextAsync(settingsPath);
 
         serverSettings = serverSettings
+            .AddOrUpdateJsonValue(
+                "ConnectionStrings:DefaultConnection",
+                Environment.GetEnvironmentVariable("XENIAL_DEFAULTCONNECTIONSTRING") ?? PleaseSet
+            )
             .AddOrUpdateJsonValue(
                 "Authentication:Xenial:ApiSecret",
                 Environment.GetEnvironmentVariable("API_AUTHENTICATION_XENIAL_APISECRET") ?? PleaseSet
