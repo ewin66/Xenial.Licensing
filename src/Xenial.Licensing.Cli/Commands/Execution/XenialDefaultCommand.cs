@@ -7,11 +7,11 @@ namespace Xenial.Licensing.Cli.Commands
     {
         public virtual IEnumerable<Option> CreateOptions() => new[]
         {
-            new Option(new[] { "interactive", "i" }, "Commands will pause and ask for arguments")
+            new Option(new[] { "--interactive", "-i" }, "Commands will pause and ask for arguments")
             {
                 Argument = new Argument<bool>()
             },
-            new Option(new[] { "no-logo" }, "Will not output the display header")
+            new Option(new[] { "--no-logo" }, "Will not output the display header")
             {
                 Argument = new Argument<bool>()
             },

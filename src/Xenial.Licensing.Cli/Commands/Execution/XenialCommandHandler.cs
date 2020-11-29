@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 using Xenial.Licensing.Cli.Services.Default;
+using Colorful;
 
 namespace Xenial.Licensing.Cli.Commands
 {
@@ -41,8 +42,7 @@ namespace Xenial.Licensing.Cli.Commands
             {
                 if (!defaultCommand.NoLogo)
                 {
-                    context.Console.Out.WriteLine(Consts.Header);
-                    context.Console.Out.WriteLine();
+                    Consts.WriteHeader();
                 }
             }
 

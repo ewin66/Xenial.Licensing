@@ -84,8 +84,7 @@ namespace Xenial.Licensing.Cli.Commands
 
             if (!Command.NoLogo)
             {
-                context.Console.Out.WriteLine(Consts.Header);
-                context.Console.Out.WriteLine();
+                Consts.WriteHeader();
             }
 
             //TODO: invoke hello command if wizard was never ran
