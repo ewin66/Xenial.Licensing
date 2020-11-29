@@ -65,18 +65,19 @@ namespace Xenial.Licensing.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{Configuration.GetSection("Authentication:Xenial").GetValue<string>("ClientId")} v1");
-                    c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List);
-
-                    c.OAuthClientId(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientId"));
-                    c.OAuthAppName(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientId"));
-                    c.OAuthClientSecret(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientSecret"));
-                    c.OAuthUsePkce();
-                });
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{Configuration.GetSection("Authentication:Xenial").GetValue<string>("ClientId")} v1");
+                c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List);
+
+                c.OAuthClientId(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientId"));
+                c.OAuthAppName(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientId"));
+                c.OAuthClientSecret(Configuration.GetSection("Authentication:Xenial.Swagger").GetValue<string>("ClientSecret"));
+                c.OAuthUsePkce();
+            });
 
             app.UseHttpsRedirection();
 

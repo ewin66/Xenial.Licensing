@@ -25,9 +25,8 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("System", LogEventLevel.Warning)
     .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
     .Enrich.FromLogContext()
-    //#if !DEBUG
     .WriteTo.File(
-        @"C:\logs\licensing.xenial.io\Xenial.Licensing.log",
+        @"C:\logs\licensing.xenial.io\api.licensing.xenial.io.log",
         fileSizeLimitBytes: 1_000_000,
         rollOnFileSizeLimit: true,
         shared: true,

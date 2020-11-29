@@ -30,7 +30,7 @@ namespace Xenial.Licensing.Blazor.Server
                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                .Enrich.FromLogContext()
                .WriteTo.File(
-                   @"C:\logs\admin.licensing.xenial.io\Xenial.Platform.Licensing.Admin.log",
+                   @"C:\logs\licensing.xenial.io\admin.licensing.xenial.io.log",
                    fileSizeLimitBytes: 1_000_000,
                    rollOnFileSizeLimit: true,
                    shared: true,
