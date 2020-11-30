@@ -4,6 +4,7 @@ using System.Net.Http;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 using Xenial.Licensing.Cli;
 using Xenial.Licensing.Cli.Commands;
@@ -39,6 +40,13 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
         .ConfigureServices((hostContext, services) =>
         {
             services.AddTransient<IUserProfileProvider, DefaultUserProfileProvider>();
+
+            services.AddTransient<ITokenPathProvider, DefaultPathProvider>();
+            services.AddTransient<ITokenStorage, TokenFileStorage>();
+            services.AddTransient<DefaultRefreshTokenHandler>();
+            services.AddTransient<DefaultConfigurationProvider>();
+            services.AddTransient<DefaultDiscoveryProvider>();
+
             services.AddTransient<IDeviceIdProvider, DefaultDeviceIdProvider>();
             services.AddTransient<IUserInfoProvider, DefaultUserInfoProvider>();
             services.AddTransient<ILicenseValidator, DefaultLicenseValidator>();

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Xenial.Licensing.Cli.Services
 {
-    public record UserToken(string AccessToken, string RefreshToken, string IdToken);
+    public record UserToken(string AccessToken, string RefreshToken, string IdToken, DateTime ExpiresAt);
 
     public interface ITokenProvider
     {
-        Task<UserToken> GetUserTokenAsync();
+        Task<UserToken> RefreshTokenAsync();
     }
 }

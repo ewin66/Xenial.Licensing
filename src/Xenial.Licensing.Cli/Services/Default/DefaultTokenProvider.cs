@@ -36,11 +36,12 @@ namespace Xenial.Licensing.Cli.Services.Default
             this.logger = logger;
         }
 
-        public async Task<UserToken> GetUserTokenAsync()
+        public async Task<UserToken> RefreshTokenAsync()
         {
             var section = configuration.GetSection("Authentication:Xenial");
             var authority = section.GetValue<string>("Authority");
             var clientId = section.GetValue<string>("ClientId");
+            var scopes = section.GetSection("Scope").AsEnumerable().Where(s => !string.IsNullOrEmpty(s.Value)).Select(s => s.Value).ToArray();
 
             var disco = await httpClient.GetDiscoveryDocumentAsync(authority);
             if (disco.IsError)
@@ -78,9 +79,6 @@ namespace Xenial.Licensing.Cli.Services.Default
                     }
                 }
             }
-
-            var scopes = section.GetSection("Scope").AsEnumerable().Where(s => !string.IsNullOrEmpty(s.Value)).Select(s => s.Value).ToArray();
-
 
             var result = await httpClient.RequestDeviceAuthorizationAsync(new DeviceAuthorizationRequest
             {
@@ -133,7 +131,13 @@ namespace Xenial.Licensing.Cli.Services.Default
                 }
                 else
                 {
-                    var token = new UserToken(tokenResponse.AccessToken, tokenResponse.RefreshToken, tokenResponse.IdentityToken);
+                    var token = new UserToken(
+                        tokenResponse.AccessToken,
+                        tokenResponse.RefreshToken,
+                        tokenResponse.IdentityToken,
+                        DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
+                    );
+
                     await CacheTokenAsync(tokenFile, token);
                     return token;
                 }
@@ -179,11 +183,18 @@ namespace Xenial.Licensing.Cli.Services.Default
                     ClientId = clientId,
                     RefreshToken = userTokens.RefreshToken
                 });
+
                 if (refreshResult.IsError)
                 {
                     throw new Exception(refreshResult.Error);
                 }
-                return new UserToken(refreshResult.AccessToken, refreshResult.RefreshToken, refreshResult.IdentityToken);
+
+                return new UserToken(
+                    refreshResult.AccessToken,
+                    refreshResult.RefreshToken,
+                    refreshResult.IdentityToken,
+                    DateTime.UtcNow.AddSeconds(refreshResult.ExpiresIn)
+                );
             }
             catch (Exception ex)
             {

@@ -31,7 +31,7 @@ namespace Xenial.Licensing.Cli.Services.Default
 
         public async Task<UserInfo> GetUserInfoAsync()
         {
-            var token = await tokenProvider.GetUserTokenAsync();
+            var token = await tokenProvider.RefreshTokenAsync();
             httpClient.SetBearerToken(token.AccessToken);
             var identityUrl = configuration.GetSection("Authentication:Xenial").GetValue<string>("Authority");
             var discoResult = await httpClient.GetDiscoveryDocumentAsync(identityUrl);

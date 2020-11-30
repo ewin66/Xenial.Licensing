@@ -19,7 +19,7 @@ namespace Xenial.Licensing.Cli.Services.Default
 
         public async Task<string> GetAccessTokenAsync(CancellationToken cancellationToken)
         {
-            var userToken = await tokenProvider.GetUserTokenAsync();
+            var userToken = await tokenProvider.RefreshTokenAsync();
 
             return userToken.AccessToken;
         }
