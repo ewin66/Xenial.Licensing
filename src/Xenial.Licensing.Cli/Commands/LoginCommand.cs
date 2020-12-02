@@ -72,6 +72,7 @@ namespace Xenial.Licensing.Cli.Commands
         protected async override Task<int> ExecuteCommand(LoginCommand arguments)
         {
             Console.WriteLine("Logging in...");
+            logger.LogInformation("Logging in... with {Arguments}", arguments);
             if (!arguments.NoCache)
             {
                 var userToken = await tokenStorage.LoadUserTokenAsync();
@@ -88,17 +89,27 @@ namespace Xenial.Licensing.Cli.Commands
 
             var disco = await discoveryProvider.FetchDiscoveryDocument();
 
-            var result = await httpClient.RequestDeviceAuthorizationAsync(new DeviceAuthorizationRequest
+            var request = new DeviceAuthorizationRequest
             {
                 Address = disco.DeviceAuthorizationEndpoint,
                 ClientId = configurationProvider.ClientId,
                 Scope = configurationProvider.Scope
-            });
+            };
+
+            logger.LogInformation("RequestDeviceAuthorizationAsync {Request}", request);
+
+            var result = await httpClient.RequestDeviceAuthorizationAsync(request);
 
             if (result.IsError)
             {
                 Console.WriteLine(result.Error);
-                throw new Exception(result.Error);
+                var ex = new Exception(result.Error);
+                logger.LogError(ex, "RequestDeviceAuthorizationAsync {Request} {Response}", request, result);
+                throw ex;
+            }
+            else
+            {
+                logger.LogInformation("RequestDeviceAuthorizationAsync {Request} {Response}", request, result);
             }
 
             Console.WriteLine($"Visit: {result.VerificationUri}");
