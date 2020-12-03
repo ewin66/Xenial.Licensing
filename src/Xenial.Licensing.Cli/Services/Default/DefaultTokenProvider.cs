@@ -94,7 +94,7 @@ namespace Xenial.Licensing.Cli.Services.Default
 
             WriteLine();
             WriteLine();
-            WriteLine(Consts.Header);
+            Consts.WriteHeader();
             WriteLine();
             WriteLine();
             WriteLine($"Visit: {result.VerificationUri}");

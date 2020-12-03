@@ -72,5 +72,6 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
 
             services.AddSingleton<XenialLicensingApplication>();
             services.AddSingleton<XenialRootCommand>();
+
             services.AddXenialCommands();
         });

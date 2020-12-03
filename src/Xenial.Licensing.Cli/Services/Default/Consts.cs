@@ -13,14 +13,6 @@ namespace Xenial.Licensing.Cli.Services.Default
 {
     internal class Consts
     {
-        internal const string Header = @"__   __          _       _ 
-\ \ / /         (_)     | |
- \ V / ___ _ __  _  __ _| |
-  > < / _ \ '_ \| |/ _` | |
- / . \  __/ | | | | (_| | |
-/_/ \_\___|_| |_|_|\__,_|_|
-                           ";
-
         internal static Color DarkBlue { get; } = Color.FromArgb(0, 80, 106);
         internal static Color LightBlue { get; } = Color.FromArgb(56, 188, 216);
         internal static Color Orange { get; } = Color.FromArgb(243, 160, 39);
@@ -65,7 +57,7 @@ namespace Xenial.Licensing.Cli.Services.Default
                 }
             }
 
-            WriteSegments(new[] { ("Xenial", LightBlue), (".", White), ("io", Orange) });
+            WriteSegments(new[] { ("Xenial", LightBlue), (".", Orange), ("io", DarkBlue) });
 
             WriteLine();
         }
