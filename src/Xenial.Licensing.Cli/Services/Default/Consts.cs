@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 using Colorful;
 
-using static Colorful.Console;
+using TrueColorConsole;
+
+using static TrueColorConsole.VTConsole;
 
 namespace Xenial.Licensing.Cli.Services.Default
 {
@@ -20,6 +22,11 @@ namespace Xenial.Licensing.Cli.Services.Default
 
         public static void WriteHeader()
         {
+            if (VTConsole.IsSupported)
+            {
+                VTConsole.Enable();
+            }
+
             using var fontStream = typeof(Consts).Assembly.GetManifestResourceStream(
                 $"{typeof(Consts).Assembly.GetName().Name}.Fonts.big.flf"
             );
@@ -53,11 +60,27 @@ namespace Xenial.Licensing.Cli.Services.Default
 
                 foreach (var row in Iter())
                 {
-                    Write(row.str, row.color);
+                    if (VTConsole.IsSupported)
+                    {
+                        Write(row.str, row.color);
+                    }
+                    else
+                    {
+                        Colorful.Console.Write(row.str, row.color);
+                    }
                 }
             }
 
             WriteSegments(new[] { ("Xenial", LightBlue), (".", Orange), ("io", DarkBlue) });
+
+            if (VTConsole.IsSupported)
+            {
+                VTConsole.SoftReset();
+            }
+            else
+            {
+                Colorful.Console.ResetColor();
+            }
 
             WriteLine();
         }

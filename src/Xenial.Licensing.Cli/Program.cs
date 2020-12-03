@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+using TrueColorConsole;
+
 using Xenial.Licensing.Cli;
 using Xenial.Licensing.Cli.Commands;
 using Xenial.Licensing.Cli.Services;
