@@ -31,10 +31,12 @@ namespace Xenial.Licensing.Model
         public string Name { get => name; set => SetPropertyValue(ref name, value); }
 
         [Persistent("PassPhrase")]
+        [DevExpress.ExpressApp.Model.ModelDefault("IsPassword", "True")]
         public string PassPhrase { get => passPhrase; set => SetPropertyValue(ref passPhrase, value); }
 
         [Persistent("PrivateKey")]
         [Size(SizeAttribute.Unlimited)]
+        [DevExpress.ExpressApp.Model.ModelDefault("IsPassword", "True")]
         public string PrivateKey { get => privateKey; set => SetPropertyValue(ref privateKey, value); }
 
         [Persistent("PublicKey")]
