@@ -76,11 +76,15 @@ namespace Xenial.Licensing.Cli.Commands
             if (!arguments.NoCache)
             {
                 var userToken = await tokenStorage.LoadUserTokenAsync();
+                logger.LogInformation("Loaded {UserToken}", userToken);
                 if (userToken != null)
                 {
                     userToken = await refreshTokenHandler.RefreshTokenAsync(userToken);
+                    logger.LogInformation("Refreshed {UserToken}", userToken);
                     if (userToken != null)
                     {
+                        Console.WriteLine("Login successful!");
+                        logger.LogInformation("Login successful!");
                         await StoreToken(arguments, userToken);
                         return 0;
                     }
@@ -156,6 +160,9 @@ namespace Xenial.Licensing.Cli.Commands
                     );
 
                     spinner.ClearLine();
+
+                    Console.WriteLine("Login successful!");
+
                     await StoreToken(arguments, userToken);
                     return 0;
                 }
@@ -166,11 +173,13 @@ namespace Xenial.Licensing.Cli.Commands
 
         private async Task StoreToken(LoginCommand arguments, UserToken userToken)
         {
+            logger.LogInformation("Try to Store {UserToken} with {Arguments}", userToken, arguments);
             if (arguments.NoStore)
             {
                 return;
             }
             await tokenStorage.StoreAsync(userToken);
+            logger.LogInformation("Stored {UserToken} with {Arguments}", userToken, arguments);
         }
     }
 }
