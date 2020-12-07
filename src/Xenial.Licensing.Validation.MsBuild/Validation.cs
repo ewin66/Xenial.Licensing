@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.Build.Framework;
 
 using Standard.Licensing.Validation;
+using Newtonsoft.Json;
 
 namespace Xenial.Licensing
 {
@@ -24,10 +25,10 @@ namespace Xenial.Licensing
 
             // Obviously, remove this when you're finished debugging as it will wait indefinitely
             // for the debugger to attach.
-            //System.Console.WriteLine("PID = " + System.Diagnostics.Process.GetCurrentProcess().Id);
-            //while (!System.Diagnostics.Debugger.IsAttached && !cancelled)
-            //{
-            //}
+            // System.Console.WriteLine("PID = " + System.Diagnostics.Process.GetCurrentProcess().Id);
+            // while (!System.Diagnostics.Debugger.IsAttached && !cancelled)
+            // {
+            // }
 #endif
             if (cancelled)
             {
@@ -66,7 +67,8 @@ namespace Xenial.Licensing
             else
             {
                 var license = Standard.Licensing.License.Load(xenialLicense);
-                var isSignitureValid = license.VerifySignature(xenialPublicKeys);
+                var publicKey = JsonConvert.DeserializeObject<Dictionary<string, string>>(xenialPublicKeys)["Xenial"];
+                var isSignitureValid = license.VerifySignature(publicKey);
                 if (!isSignitureValid)
                 {
                     Log.LogError($"{prefix} Xenial.Signiture is invalid");

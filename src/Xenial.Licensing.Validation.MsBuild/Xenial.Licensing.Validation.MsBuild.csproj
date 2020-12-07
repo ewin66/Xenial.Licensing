@@ -15,8 +15,11 @@
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <!-- Compiling for .NET Framework on non-Windows systems is not yet supported-->
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.0</TargetFrameworks>
-    <NoWarn>NU5128;$(NoWarn)</NoWarn>
+    <!-- <NoWarn>NU5128;$(NoWarn)</NoWarn> -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <!-- forces SDK to copy dependencies into build output to make packing easier -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,16 +27,30 @@
       PrivateAssets="All" is essential. This prevents these build-only dependencies
       from ending up in the NuGet package's list of dependencies.
      -->
-    <PackageReference Include="ILMerge.Fody" Version="1.14.0" PrivateAssets="All" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Framework" Version="16.8.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.8.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.8.0" PrivateAssets="All" />
     <PackageReference Include="Standard.Licensing" Version="1.1.5" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" PrivateAssets="All" />
   </ItemGroup>
   
   <ItemGroup>
     <Content Include="build\**\*" PackagePath="build\" />
   </ItemGroup>
-
+  
+  <!--
+  The include needs to happen after output has been copied to build output folder
+  but before NuGet generates a nuspec. See https://github.com/NuGet/Home/issues/4704.
+  -->
+  <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_PackageFiles Include="bin\$(Configuration)\*\Newtonsoft.Json.dll;bin\$(Configuration)\*\Standard.Licensing.dll">
+        <PackagePath>tools\%(RecursiveDir)</PackagePath>
+        <Visible>false</Visible>
+        <BuildAction>Content</BuildAction>
+      </_PackageFiles>
+    </ItemGroup>
+  </Target>
+  
 </Project>
