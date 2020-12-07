@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
+using Microsoft.Extensions.Logging;
+
 using Xenial.Licensing.Cli.Services;
 using Xenial.Licensing.Cli.Services.Queries;
 using Xenial.Licensing.Cli.XenialLicenseApi;
@@ -37,7 +39,6 @@ namespace Xenial.Licensing.Cli.Commands
     [XenialCommandHandler("request-trial")]
     public class RequestTrialCommandHandler : XenialCommandHandler<RequestTrialCommand>
     {
-        private readonly ILicenseQuery licenseQuery;
         private readonly ILicenseClient licenseClient;
         private readonly IDeviceIdProvider deviceIdProvider;
         private readonly IUserInfoProvider userInfoProvider;
@@ -45,19 +46,19 @@ namespace Xenial.Licensing.Cli.Commands
         private readonly ILicensePublicKeyStorage publicKeyStorage;
         private readonly ILicenseValidator licenseValidator;
         private readonly ILicenseInformationProvider licenseInformationProvider;
+        private readonly ILogger<RequestTrialCommandHandler> logger;
 
         public RequestTrialCommandHandler(
-            ILicenseQuery licenseQuery,
             ILicenseClient licenseClient,
             IDeviceIdProvider deviceIdProvider,
             IUserInfoProvider userInfoProvider,
             ILicenseStorage licenseStorage,
             ILicensePublicKeyStorage publicKeyStorage,
             ILicenseValidator licenseValidator,
-            ILicenseInformationProvider licenseInformationProvider
+            ILicenseInformationProvider licenseInformationProvider,
+            ILogger<RequestTrialCommandHandler> logger
         )
         {
-            this.licenseQuery = licenseQuery;
             this.licenseClient = licenseClient;
             this.deviceIdProvider = deviceIdProvider;
             this.userInfoProvider = userInfoProvider;
@@ -65,17 +66,24 @@ namespace Xenial.Licensing.Cli.Commands
             this.publicKeyStorage = publicKeyStorage;
             this.licenseValidator = licenseValidator;
             this.licenseInformationProvider = licenseInformationProvider;
+            this.logger = logger;
         }
 
-        protected async override Task<int> ExecuteCommand(RequestTrialCommand arguments)
+        protected override async Task<int> ExecuteCommand(RequestTrialCommand arguments)
         {
             WriteLine("Fetching user information...");
+            logger.LogInformation("Fetching user information...");
 
             var userInfo = await userInfoProvider.GetUserInfoAsync();
             if (userInfo == null)
             {
                 WriteLine("ERROR: Cannot fetch user information");
+                logger.LogError("ERROR: Cannot fetch user information");
                 return -1;
+            }
+            else
+            {
+                logger.LogInformation("Logged in with {User}", userInfo);
             }
 
             WriteLine($"Hello {userInfo.UserName}!");
@@ -83,24 +91,15 @@ namespace Xenial.Licensing.Cli.Commands
             WriteLine($"Email: {userInfo.Email}");
 
             WriteLine("Fetching active licenses...");
+            logger.LogInformation("Fetching active licenses...");
 
             var storedLicense = await licenseStorage.FetchAsync();
 
             WriteLine($"Has stored license...? {!string.IsNullOrEmpty(storedLicense)}");
 
-            var result = await licenseQuery.HasActiveLicense();
-
-            WriteLine($"Has active licenses...? {result}");
             if (string.IsNullOrEmpty(storedLicense))
             {
-                var askForKey = true;
-
-                if (arguments.Interactive)
-                {
-                    WriteLine($"You don't have a license yet. Do you want to request a trial? Y/n");
-                    var key = ReadKey();
-                    askForKey = key.Key == ConsoleKey.Y || key.Key == ConsoleKey.Enter;
-                }
+                var askForKey = arguments.AskForKey("You don't have a license yet. Do you want to request a trial?");
 
                 if (askForKey)
                 {
@@ -108,9 +107,19 @@ namespace Xenial.Licensing.Cli.Commands
                     {
                         var machineKey = await deviceIdProvider.GetDeviceIdAsync();
                         var trialResult = await licenseClient.LicensesRequestTrialAsync(new InRequestTrialModel(machineKey));
-                        WriteLine(FormatXml(trialResult.License));
-                        await licenseStorage.StoreAsync(trialResult.License);
-                        await publicKeyStorage.StoreAsync(trialResult.PublicKeyName, trialResult.PublicKey);
+
+                        if (await licenseValidator.IsValid(trialResult.License, trialResult.PublicKey))
+                        {
+                            WriteLine($"License is valid until {await licenseInformationProvider.IsValidUntil()}");
+                        }
+
+                        if (!arguments.NoStore)
+                        {
+                            await licenseStorage.StoreAsync(trialResult.License);
+                            await publicKeyStorage.StoreAsync(trialResult.PublicKeyName, trialResult.PublicKey);
+                        }
+
+                        return 0;
                     }
                     catch (LicenseApiException<IDictionary<string, object>> ex) when (ex.StatusCode == 400)
                     {
@@ -127,25 +136,12 @@ namespace Xenial.Licensing.Cli.Commands
                 }
             }
 
-            if (await licenseValidator.IsValid())
+            if (await licenseValidator.IsValid(storedLicense))
             {
                 WriteLine($"License is valid until {await licenseInformationProvider.IsValidUntil()}");
             }
 
             return 0;
-            static string FormatXml(string xml)
-            {
-                try
-                {
-                    var doc = XDocument.Parse(xml);
-                    return doc.ToString();
-                }
-                catch (Exception)
-                {
-                    // Handle and throw if fatal exception here; don't just ignore them
-                    return xml;
-                }
-            }
         }
     }
 }

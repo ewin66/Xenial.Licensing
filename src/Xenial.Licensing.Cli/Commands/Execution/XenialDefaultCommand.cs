@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.CommandLine;
 
 namespace Xenial.Licensing.Cli.Commands
@@ -19,5 +20,17 @@ namespace Xenial.Licensing.Cli.Commands
 
         public bool Interactive { get; set; }
         public bool NoLogo { get; set; }
+
+        public bool AskForKey(string message)
+        {
+            if (Interactive)
+            {
+                Console.WriteLine($"{message} Y/n");
+                var key = Console.ReadKey();
+                var askForKey = key.Key == ConsoleKey.Y || key.Key == ConsoleKey.Enter;
+                return askForKey;
+            }
+            return true;
+        }
     }
 }

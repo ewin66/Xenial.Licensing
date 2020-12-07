@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using DevExpress.Xpo;
-using DevExpress.XtraRichEdit.Fields;
 
 using Shouldly;
 
@@ -167,8 +164,11 @@ namespace Xenial.Licensing.Tests.Domain
 
         private static LicenseSettings CreateDefaultSettings(this UnitOfWork unitOfWork)
         {
-            var key = new LicensingKey(unitOfWork);
-            key.PassPhrase = "This is the passphrase";
+            var key = new LicensingKey(unitOfWork)
+            {
+                PassPhrase = "This is the passphrase"
+            };
+
             var keyGenerator = Standard.Licensing.Security.Cryptography.KeyGenerator.Create();
             var keyPair = keyGenerator.GenerateKeyPair();
             key.PrivateKey = keyPair.ToEncryptedPrivateKeyString(key.PassPhrase);

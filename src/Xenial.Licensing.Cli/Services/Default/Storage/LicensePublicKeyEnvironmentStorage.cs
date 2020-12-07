@@ -17,7 +17,7 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
             return Task.FromResult(keys.FirstOrDefault(r => r.Key == keyName).Value);
         }
 
-        private Dictionary<string, string> GetKeys()
+        private static Dictionary<string, string> GetKeys()
         {
             var keys = Environment.GetEnvironmentVariable(keyName);
             if (!string.IsNullOrEmpty(keys))

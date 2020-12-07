@@ -11,7 +11,6 @@ using TrueColorConsole;
 using Xenial.Licensing.Cli;
 using Xenial.Licensing.Cli.Commands;
 using Xenial.Licensing.Cli.Services;
-using Xenial.Licensing.Cli.Services.Commands.Default;
 using Xenial.Licensing.Cli.Services.Default;
 using Xenial.Licensing.Cli.Services.Default.Storage;
 using Xenial.Licensing.Cli.Services.Queries;
@@ -57,6 +56,8 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
             services.AddTransient<ILicensePublicKeyStorage, AggregateLicensePublicKeyStorage>();
             services.AddTransient<ILicenseStorage, AggregateLicenseStorage>();
 
+            services.AddTransient<ILicenseQuery, DefaultLicenseQuery>();
+
             services.AddHttpClient<DefaultTokenProvider>();
             services.AddHttpClient(nameof(LicenseClient));
             services.AddHttpClient<DefaultUserInfoProvider>();
@@ -69,10 +70,6 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
                     s.GetRequiredService<IHttpClientFactory>().CreateClient(nameof(LicenseClient))
             ));
 
-            services.AddTransient<ILicenseQuery, DefaultLicenseQuery>();
-            services.AddTransient<DefaultWelcomeCommand>();
-
-            services.AddSingleton<XenialLicensingApplication>();
             services.AddSingleton<XenialRootCommand>();
 
             services.AddXenialCommands();

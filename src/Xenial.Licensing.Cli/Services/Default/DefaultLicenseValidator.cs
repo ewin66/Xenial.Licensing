@@ -6,26 +6,28 @@ using System.Threading.Tasks;
 
 using Standard.Licensing.Validation;
 
+#nullable enable
+
 namespace Xenial.Licensing.Cli.Services.Default
 {
     public class DefaultLicenseValidator : ILicenseValidator
     {
-        private readonly ILicenseStorage licenseStorage;
         private readonly ILicensePublicKeyStorage publicKeyStorage;
 
-        public DefaultLicenseValidator(ILicenseStorage licenseStorage, ILicensePublicKeyStorage publicKeyStorage)
-        {
-            this.licenseStorage = licenseStorage;
-            this.publicKeyStorage = publicKeyStorage;
-        }
+        public DefaultLicenseValidator(ILicensePublicKeyStorage publicKeyStorage)
+            => this.publicKeyStorage = publicKeyStorage;
 
-        public async Task<bool> IsValid()
+        public async Task<bool> IsValid(string licString, string? publicKey = null)
         {
-            var licString = await licenseStorage.FetchAsync();
             if (!string.IsNullOrEmpty(licString))
             {
                 var lic = Standard.Licensing.License.Load(licString);
-                var publicKey = await publicKeyStorage.FetchAsync(lic.AdditionalAttributes.Get("PublicKeyName"));
+
+                if (string.IsNullOrEmpty(publicKey))
+                {
+                    publicKey = await publicKeyStorage.FetchAsync(lic.AdditionalAttributes.Get("PublicKeyName"));
+                }
+
                 return !lic.Validate()
                     .ExpirationDate()
                     .And()
