@@ -4,12 +4,12 @@
 -->
 <Project>
   <PropertyGroup>
-    <_TaskTfm Condition=" '$(MSBuildRuntimeType)' == 'Core' ">netstandard1.3</_TaskTfm>
-    <_TaskTfm Condition=" '$(MSBuildRuntimeType)' != 'Core' ">net46</_TaskTfm>
+    <_TaskTfm Condition=" '$(MSBuildRuntimeType)' == 'Core' ">netstandard2.0</_TaskTfm>
+    <_TaskTfm Condition=" '$(MSBuildRuntimeType)' != 'Core' ">net472</_TaskTfm>
 
     <_TaskAssembly>$(MSBuildThisFileDirectory)..\tools\$(_TaskTfm)\Xenial.Licensing.Validation.MsBuild.dll</_TaskAssembly>
   </PropertyGroup>
   
-  <UsingTask TaskName="Xenial.Licensing.Validation" AssemblyFile="$(_TaskAssembly)" />
+  <UsingTask TaskName="Xenial.Licensing.XenialValidation" AssemblyFile="$(_TaskAssembly)" />
   
 </Project>

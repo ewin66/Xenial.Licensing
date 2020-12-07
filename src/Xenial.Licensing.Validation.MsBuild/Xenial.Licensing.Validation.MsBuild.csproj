@@ -12,9 +12,11 @@
     <!-- For the sake of demoing, put the package output into a parent folder -->
     <PackageOutputPath>..\artifacts\packages</PackageOutputPath>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <!-- Compiling for .NET Framework on non-Windows systems is not yet supported-->
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard1.3</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.0</TargetFrameworks>
+    <NoWarn>NU5128;$(NoWarn)</NoWarn>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,11 +24,12 @@
       PrivateAssets="All" is essential. This prevents these build-only dependencies
       from ending up in the NuGet package's list of dependencies.
      -->
-    <PackageReference Include="NETStandard.Library" Version="1.6.1" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Build.Framework" Version="15.1.548" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.1.548" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.548" PrivateAssets="All" />
-    <PackageReference Include="Standard.Licensing" Version="1.1.5" />
+    <PackageReference Include="ILMerge.Fody" Version="1.14.0" PrivateAssets="All" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="16.8.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.8.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.8.0" PrivateAssets="All" />
+    <PackageReference Include="Standard.Licensing" Version="1.1.5" PrivateAssets="All" />
   </ItemGroup>
   
   <ItemGroup>
