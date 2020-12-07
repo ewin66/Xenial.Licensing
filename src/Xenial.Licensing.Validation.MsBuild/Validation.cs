@@ -5,7 +5,6 @@ using System.Text;
 
 using Microsoft.Build.Framework;
 
-using Standard.Licensing.Validation;
 using Newtonsoft.Json;
 
 namespace Xenial.Licensing
@@ -16,6 +15,10 @@ namespace Xenial.Licensing
 
         private bool cancelled;
         public void Cancel() => cancelled = true;
+
+        [Output]
+        public string GeneratedLicenseFile { get; set; }
+
         public override bool Execute()
         {
 #if DEBUG
@@ -96,7 +99,17 @@ namespace Xenial.Licensing
         private void InjectTrialAttributes()
         {
             Log.LogMessage(MessageImportance.High, $"{prefix} Building in Trial mode");
-            _ = false;
+
+            var builder = new StringBuilder();
+
+            builder.AppendLine("[assembly: Xenial.XenialLicenceAttribute()]");
+            builder.AppendLine("namespace Xenial {");
+            builder.AppendLine("[System.Runtime.CompilerServices.CompilerGenerated]");
+            builder.AppendLine("[System.AttributeUsage(System.AttributeTargets.Assembly)]");
+            builder.AppendLine("internal class XenialLicenceAttribute : System.Attribute {");
+            builder.AppendLine("}");
+            builder.AppendLine("}");
+            GeneratedLicenseFile = builder.ToString();
         }
 
         private void InjectReleaseAttributes()
