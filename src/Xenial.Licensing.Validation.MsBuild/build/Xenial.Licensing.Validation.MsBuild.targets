@@ -1,0 +1,6 @@
+﻿<Project>
+  <Target Name="ValidateXenialLicense" BeforeTargets="Build" Condition="'$(NCrunch)' != '1'">
+		<Message Importance="High" Text="Executing: $(_ToolAssembly) $(TargetDir)$(TargetFileName)"/>
+		<Exec Command="$(_ToolAssembly) $(TargetDir)$(TargetFileName)"/>
+  </Target>
+</Project>
