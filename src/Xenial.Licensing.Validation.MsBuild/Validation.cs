@@ -101,7 +101,7 @@ namespace Xenial.Licensing
             Log.LogMessage(MessageImportance.High, $"{prefix} Building in Trial mode");
 
             var builder = new StringBuilder();
-
+            
             builder.AppendLine("[assembly: Xenial.XenialLicenceAttribute()]");
             builder.AppendLine("namespace Xenial {");
             builder.AppendLine("[System.Runtime.CompilerServices.CompilerGenerated]");
