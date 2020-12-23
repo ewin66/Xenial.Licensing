@@ -11,7 +11,14 @@ namespace Xenial.Licensing.Module.Infrastructure
     public static class NonPersistentObjectExtentions
     {
         public static T GetSingleton<T>(this IObjectSpace objectSpace)
-            => objectSpace.FindObject<T>(null, true);
+        {
+            var obj = objectSpace.FindObject<T>(null, true);
+            if (obj is T tObject)
+            {
+                return tObject;
+            }
+            return objectSpace.CreateObject<T>();
+        }
 
         /// <summary>
         /// Returns an <see cref="IObjectSpace"/> for the specified type.
@@ -32,6 +39,7 @@ namespace Xenial.Licensing.Module.Infrastructure
         /// </summary>
         /// <typeparam name="T">The type.</typeparam>
         /// <returns></returns>
-        public static IObjectSpace ObjectSpaceFor<T>(this IObjectSpaceLink baseObject) => baseObject.ObjectSpaceFor(typeof(T));
+        public static IObjectSpace ObjectSpaceFor<T>(this IObjectSpaceLink baseObject)
+            => baseObject.ObjectSpaceFor(typeof(T));
     }
 }

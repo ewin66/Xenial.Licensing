@@ -20,11 +20,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenial.Licensing.Module.Bla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenial.Licensing.Blazor.Server", "src\Xenial.Licensing.Blazor.Server\Xenial.Licensing.Blazor.Server.csproj", "{738FEB93-B0F0-45EB-90C3-A5A01E14CA1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenial.Licensing.Domain", "src\Xenial.Licensing.Domain\Xenial.Licensing.Domain.csproj", "{B436E5C6-C969-4990-BD38-A31084232786}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenial.Licensing.Domain", "src\Xenial.Licensing.Domain\Xenial.Licensing.Domain.csproj", "{B436E5C6-C969-4990-BD38-A31084232786}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenial.Licensing.Tests", "src\Xenial.Licensing.Tests\Xenial.Licensing.Tests.csproj", "{E3D37688-285C-4952-A050-9E2DA7561605}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xenial.Licensing.Validation.MsBuild", "src\Xenial.Licensing.Validation.MsBuild\Xenial.Licensing.Validation.MsBuild.csproj", "{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenial.Licensing.Tests", "src\Xenial.Licensing.Tests\Xenial.Licensing.Tests.csproj", "{E3D37688-285C-4952-A050-9E2DA7561605}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -183,24 +181,6 @@ Global
 		{E3D37688-285C-4952-A050-9E2DA7561605}.Release|x64.Build.0 = Release|Any CPU
 		{E3D37688-285C-4952-A050-9E2DA7561605}.Release|x86.ActiveCfg = Release|Any CPU
 		{E3D37688-285C-4952-A050-9E2DA7561605}.Release|x86.Build.0 = Release|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Debug|x64.Build.0 = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Debug|x86.Build.0 = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.EasyTest|Any CPU.ActiveCfg = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.EasyTest|Any CPU.Build.0 = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.EasyTest|x64.ActiveCfg = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.EasyTest|x64.Build.0 = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.EasyTest|x86.ActiveCfg = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.EasyTest|x86.Build.0 = Debug|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Release|x64.ActiveCfg = Release|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Release|x64.Build.0 = Release|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Release|x86.ActiveCfg = Release|Any CPU
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -214,7 +194,6 @@ Global
 		{738FEB93-B0F0-45EB-90C3-A5A01E14CA1A} = {5F789C09-1544-4C78-A4A1-CF897D4B593B}
 		{B436E5C6-C969-4990-BD38-A31084232786} = {5F789C09-1544-4C78-A4A1-CF897D4B593B}
 		{E3D37688-285C-4952-A050-9E2DA7561605} = {5F789C09-1544-4C78-A4A1-CF897D4B593B}
-		{15BF6DF6-4D5D-460D-9FC3-4DDBB6216AF1} = {5F789C09-1544-4C78-A4A1-CF897D4B593B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F832FFA-94E9-4654-BE14-FBE321E32E8D}

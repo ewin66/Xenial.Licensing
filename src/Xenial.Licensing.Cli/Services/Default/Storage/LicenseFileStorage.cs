@@ -29,5 +29,14 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
             var licenseFile = await GetLicenseFile();
             await File.WriteAllTextAsync(licenseFile, license);
         }
+
+        public async Task DeleteAsync()
+        {
+            var licenseFile = await GetLicenseFile();
+            if (File.Exists(licenseFile))
+            {
+                File.Delete(licenseFile);
+            }
+        }
     }
 }

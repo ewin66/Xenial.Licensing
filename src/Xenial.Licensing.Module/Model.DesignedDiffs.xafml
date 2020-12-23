@@ -1,8 +1,17 @@
-﻿<?xml version="1.0" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Application Title="Xenial.Licensing">
   <Options>
     <LayoutManagerOptions RequiredFieldMark="*" />
   </Options>
+  <SchemaModules>
+    <SchemaModule Name="SystemModule" Version="20.2.4.0" IsNewNode="True" />
+  </SchemaModules>
   <Views>
+    <DetailView Id="Company_DetailView">
+      <Layout>
+        <LayoutGroup Id="@07a9b0cc-5597-420d-b2e7-ac7035e9b615" IsCollapsibleGroup="True" IsGroupCollapsed="True" IsNewNode="True" />
+        <LayoutItem Id="@cc5f02d4-f9b6-4a4a-aa27-d76fbcaf7fc5" IsNewNode="True" />
+      </Layout>
+    </DetailView>
   </Views>
 </Application>

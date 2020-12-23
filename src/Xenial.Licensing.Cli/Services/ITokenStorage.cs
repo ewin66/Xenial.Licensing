@@ -8,5 +8,6 @@ namespace Xenial.Licensing.Cli.Services
         Task<UserToken> LoadUserTokenAsync();
         Task StoreAsync(string userToken);
         Task StoreAsync(UserToken userToken);
+        Task DeleteAsync();
     }
 }

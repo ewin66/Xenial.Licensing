@@ -54,6 +54,11 @@ namespace Xenial.Licensing.Cli.Commands
             var bytes = Encoding.ASCII.GetBytes(builder.ToString());
             VTConsole.WriteFast(bytes);
 
+            if (VTConsole.IsSupported && VTConsole.IsEnabled)
+            {
+                VTConsole.Disable();
+            }
+
             return Task.FromResult(0);
         }
     }

@@ -35,5 +35,13 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
                 await storage.StoreAsync(license);
             }
         }
+
+        public async Task DeleteAsync()
+        {
+            foreach (var storage in storages)
+            {
+                await storage.DeleteAsync();
+            }
+        }
     }
 }

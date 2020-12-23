@@ -30,7 +30,7 @@ app {
 }
 
   .header-logo::after {
-    content: "Xenial.Accounting";
+    content: "Xenial.Licensing";
     position: absolute;
     left: 3rem;
     top: .5rem;

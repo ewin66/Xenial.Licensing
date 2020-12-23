@@ -38,9 +38,34 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
             var path = await GetLicensePublicKeyFile();
             var keys = await GetKeys();
             keys[keyName] = publicKey;
-            await File.WriteAllTextAsync(path, JsonSerializer.Serialize(keys));
+            await StoreKeys(path, keys);
         }
 
-        private async Task<string> GetLicensePublicKeyFile() => Path.Combine(await userProfileProvider.GetUserProfileDirectoryAsync(), "License.PublicKeys.json");
+        private static async Task StoreKeys(string path, Dictionary<string, string> keys) => await File.WriteAllTextAsync(path, JsonSerializer.Serialize(keys, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        }));
+
+        private async Task<string> GetLicensePublicKeyFile()
+            => Path.Combine(await userProfileProvider.GetUserProfileDirectoryAsync(), "License.PublicKeys.json");
+
+        public async Task DeleteAsync(string keyName)
+        {
+            var path = await GetLicensePublicKeyFile();
+            var keys = await GetKeys();
+            if (keys.ContainsKey(keyName))
+            {
+                keys.Remove(keyName);
+            }
+            await StoreKeys(path, keys);
+        }
+        public async Task DestroyAsync()
+        {
+            var path = await GetLicensePublicKeyFile();
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
     }
 }

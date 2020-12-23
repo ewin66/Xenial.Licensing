@@ -44,5 +44,14 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
         {
             WriteIndented = true
         }));
+
+        public async Task DeleteAsync()
+        {
+            var tokenFilePath = await tokenPathProvider.GetTokenFilePath();
+            if (File.Exists(tokenFilePath))
+            {
+                File.Delete(tokenFilePath);
+            }
+        }
     }
 }

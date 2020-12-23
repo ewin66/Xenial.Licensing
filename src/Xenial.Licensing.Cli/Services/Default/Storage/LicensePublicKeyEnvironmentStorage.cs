@@ -32,7 +32,27 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
         {
             var keys = GetKeys();
             keys[name] = publicKey;
-            Environment.SetEnvironmentVariable(keyName, JsonSerializer.Serialize(keys), EnvironmentVariableTarget.User);
+            StoreKeys(keys);
+            return Task.CompletedTask;
+        }
+
+        private static void StoreKeys(Dictionary<string, string> keys)
+            => Environment.SetEnvironmentVariable(keyName, JsonSerializer.Serialize(keys), EnvironmentVariableTarget.User);
+
+        public Task DeleteAsync(string name)
+        {
+            var keys = GetKeys();
+            if (keys.ContainsKey(name))
+            {
+                keys.Remove(name);
+            }
+            StoreKeys(keys);
+            return Task.CompletedTask;
+        }
+
+        public Task DestroyAsync()
+        {
+            Environment.SetEnvironmentVariable(keyName, null, EnvironmentVariableTarget.User);
             return Task.CompletedTask;
         }
     }

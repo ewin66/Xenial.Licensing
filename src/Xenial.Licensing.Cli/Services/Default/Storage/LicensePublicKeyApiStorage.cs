@@ -15,6 +15,12 @@ namespace Xenial.Licensing.Cli.Services.Default.Storage
         public LicensePublicKeyApiStorage(ILicenseClient client)
             => this.client = client;
 
+        public Task DeleteAsync(string keyName)
+            => Task.CompletedTask;
+
+        public Task DestroyAsync()
+            => Task.CompletedTask;
+
         public async Task<string> FetchAsync(string keyName)
         {
             var publicKey = await client.PublickeyNameAsync(keyName);

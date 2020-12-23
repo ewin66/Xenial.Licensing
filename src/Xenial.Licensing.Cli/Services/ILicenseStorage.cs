@@ -10,5 +10,6 @@ namespace Xenial.Licensing.Cli.Services
     {
         Task<string> FetchAsync();
         Task StoreAsync(string license);
+        Task DeleteAsync();
     }
 }
