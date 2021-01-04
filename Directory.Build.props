@@ -25,6 +25,8 @@
     <NoWarn>$(NoWarn);NU5105</NoWarn>
     <Nullable>disable</Nullable>
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    <DxPackageVersion>20.2.4</DxPackageVersion>
+    <XenialPackageVersion>0.0.12</XenialPackageVersion>
   </PropertyGroup>
   
   <ItemGroup>
