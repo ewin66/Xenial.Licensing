@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>1.0.*</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
@@ -30,7 +30,6 @@
     <PackageReference Include="DevExpress.Persistent.Base" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.Persistent.BaseImpl" Version="$(DxPackageVersion)" />
     <PackageReference Include="IdentityModel" Version="4.4.0" />
-    <PackageReference Include="Xenial.Framework" Version="$(XenialPackageVersion)" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xenial.Licensing.Model\Xenial.Licensing.Model.csproj" />

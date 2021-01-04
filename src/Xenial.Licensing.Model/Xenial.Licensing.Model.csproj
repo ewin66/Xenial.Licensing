@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>False</IsPackable>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DevExpress.Xpo" Version="$(DxPackageVersion)" />
-    <PackageReference Include="DevExpress.ExpressApp" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.Persistent.BaseImpl" Version="$(DxPackageVersion)" />
     <PackageReference Include="IdentityModel" Version="4.4.0" />
     <PackageReference Include="Standard.Licensing" Version="1.1.5" />
+    <PackageReference Include="Xenial.Framework" Version="$(XenialPackageVersion)" />
   </ItemGroup>
 
 </Project>
