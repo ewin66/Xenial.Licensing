@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="*.xafml" />
+    <EmbeddedResource Include="*.xafml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xenial.Licensing.Module\Xenial.Licensing.Module.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+     <PackageReference Include="Xenial.Framework.Win" Version="$(XenialPackageVersion)" />
+  </ItemGroup>
+
+</Project>

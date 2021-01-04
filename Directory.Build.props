@@ -26,7 +26,7 @@
     <Nullable>disable</Nullable>
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
     <DxPackageVersion>20.2.4</DxPackageVersion>
-    <XenialPackageVersion>0.0.18</XenialPackageVersion>
+    <XenialPackageVersion>0.0.20</XenialPackageVersion>
   </PropertyGroup>
   
   <ItemGroup>
