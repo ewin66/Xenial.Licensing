@@ -22,7 +22,6 @@
     <EmbeddedResource Include="Model.DesignedDiffs.xafml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DevExpress.ExpressApp" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.ExpressApp.ConditionalAppearance" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.ExpressApp.ReportsV2" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.ExpressApp.Security.Xpo" Version="$(DxPackageVersion)" />
@@ -31,6 +30,7 @@
     <PackageReference Include="DevExpress.Persistent.Base" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.Persistent.BaseImpl" Version="$(DxPackageVersion)" />
     <PackageReference Include="IdentityModel" Version="4.4.0" />
+    <PackageReference Include="Xenial.Framework" Version="$(XenialPackageVersion)" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xenial.Licensing.Model\Xenial.Licensing.Model.csproj" />

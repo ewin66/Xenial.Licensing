@@ -28,14 +28,13 @@
     <None Include="Components\XenialWindowTemplateComponent.razor" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DevExpress.ExpressApp" Version="$(DxPackageVersion)" />
-    <PackageReference Include="DevExpress.ExpressApp.Blazor" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.ExpressApp.ReportsV2.Blazor" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.ExpressApp.Security.Xpo" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.ExpressApp.Validation.Blazor" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.ExpressApp.Xpo" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.Persistent.Base" Version="$(DxPackageVersion)" />
     <PackageReference Include="DevExpress.Persistent.BaseImpl" Version="$(DxPackageVersion)" />
+    <PackageReference Include="Xenial.Framework.Blazor" Version="$(XenialPackageVersion)" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xenial.Licensing.Module\Xenial.Licensing.Module.csproj">
