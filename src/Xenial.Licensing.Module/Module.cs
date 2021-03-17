@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Updating;
-using DevExpress.ExpressApp.Model;
 using DevExpress.ExpressApp.Model.Core;
 using DevExpress.ExpressApp.Xpo;
 
@@ -76,16 +75,6 @@ namespace Xenial.Licensing.Module
                     }
                 })
                 .Build();
-        }
-
-        protected override IEnumerable<Type> GetRegularTypes()
-            => base.GetRegularTypes()
-                .UseDetailViewLayoutBuildersRegularTypes();
-
-        public override void ExtendModelInterfaces(ModelInterfaceExtenders extenders)
-        {
-            base.ExtendModelInterfaces(extenders);
-            extenders.UseDetailViewLayoutBuilders();
         }
 
         protected override IEnumerable<Type> GetDeclaredExportedTypes()
