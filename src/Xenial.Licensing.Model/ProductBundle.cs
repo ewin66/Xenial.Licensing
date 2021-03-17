@@ -12,6 +12,7 @@ namespace Xenial.Licensing.Model
     {
         private string name;
         private string id = IdentityModel.CryptoRandom.CreateUniqueId();
+        private bool isUltimate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductBundle"/> class.
@@ -26,6 +27,9 @@ namespace Xenial.Licensing.Model
 
         [Persistent("Name")]
         public string Name { get => name; set => SetPropertyValue(ref name, value); }
+
+        [Persistent("IsUltimate")]
+        public bool IsUltimate { get => isUltimate; set => SetPropertyValue(ref isUltimate, value); }
 
         [Association(nameof(ProductBundleItem.Bundle) + "-" + nameof(Products))]
         [Aggregated]

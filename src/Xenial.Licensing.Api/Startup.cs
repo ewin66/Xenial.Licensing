@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 
+using IdentityModel.AspNetCore.AccessTokenValidation;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -53,11 +55,27 @@ namespace Xenial.Licensing.Api
 
                 c.OperationFilter<AuthorizeCheckOperationFilter>(Configuration);
             });
+
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication("Bearer", (options) =>
                 {
                     Configuration.Bind("Authentication:Xenial", options);
                 });
+
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy("license.grant", policyBuilder =>
+                {
+                    policyBuilder
+                        .RequireAuthenticatedUser()
+                        .RequireAssertion(context =>
+                        {
+                            var result = context.User.HasClaim("licensing.xenial.io:licenses:grant", "true");
+                            return result;
+                        })
+                    .Build();
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

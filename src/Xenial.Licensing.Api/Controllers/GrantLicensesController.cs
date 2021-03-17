@@ -12,7 +12,7 @@ namespace Xenial.Licensing.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [Authorize("license.grant")]
     public class GrantLicensesController : ControllerBase
     {
         private readonly UnitOfWork unitOfWork;
@@ -20,5 +20,8 @@ namespace Xenial.Licensing.Api.Controllers
         public GrantLicensesController(UnitOfWork unitOfWork)
             => this.unitOfWork = unitOfWork;
 
+        [HttpGet]
+        [ProducesResponseType(typeof(bool), 200)]
+        public bool Get() => true;
     }
 }
